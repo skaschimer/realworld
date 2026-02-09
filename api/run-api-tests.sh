@@ -10,7 +10,7 @@ PASSWORD=${PASSWORD:-password}
 
 DELAY_REQUEST=${DELAY_REQUEST:-"500"}
 
-npx newman run $SCRIPTDIR/Conduit.postman_collection.json \
+bun x newman run $SCRIPTDIR/Conduit.postman_collection.json \
   --delay-request "$DELAY_REQUEST" \
   --global-var "APIURL=$APIURL" \
   --global-var "USERNAME=$USERNAME" \
