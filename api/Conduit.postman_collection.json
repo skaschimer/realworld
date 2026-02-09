@@ -53,8 +53,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/users",
-              "host": ["{{APIURL}}"],
-              "path": ["users"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           },
           "response": []
@@ -101,8 +105,13 @@
             },
             "url": {
               "raw": "{{APIURL}}/users/login",
-              "host": ["{{APIURL}}"],
-              "path": ["users", "login"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
             }
           },
           "response": []
@@ -156,8 +165,13 @@
             },
             "url": {
               "raw": "{{APIURL}}/users/login",
-              "host": ["{{APIURL}}"],
-              "path": ["users", "login"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
             }
           },
           "response": []
@@ -208,8 +222,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/user",
-              "host": ["{{APIURL}}"],
-              "path": ["user"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "user"
+              ]
             }
           },
           "response": []
@@ -260,8 +278,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/user",
-              "host": ["{{APIURL}}"],
-              "path": ["user"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "user"
+              ]
             }
           },
           "response": []
@@ -333,8 +355,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ]
             }
           },
           "response": []
@@ -401,8 +427,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles?author=johnjacob",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"],
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
               "query": [
                 {
                   "key": "author",
@@ -475,8 +505,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles?favorited={{USERNAME}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"],
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
               "query": [
                 {
                   "key": "favorited",
@@ -549,8 +583,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles?tag=dragons",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"],
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
               "query": [
                 {
                   "key": "tag",
@@ -624,11 +662,201 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ]
             }
           },
           "response": []
+        },
+        {
+          "name": "Create Second Article",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "e711dbf8-8065-4ba8-8b74-f1639a7d8208",
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "tests['Response contains \"article\" property'] = responseJSON.hasOwnProperty('article');",
+                  "",
+                  "var article = responseJSON.article || {};",
+                  "",
+                  "tests['Article has \"title\" property'] = article.hasOwnProperty('title');",
+                  "tests['Article has \"slug\" property'] = article.hasOwnProperty('slug');",
+                  "pm.globals.set('slug2', article.slug);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"article\": {\n    \"title\": \"Second article for pagination test\",\n    \"description\": \"A second article to test articlesCount\",\n    \"body\": \"This article exists to verify pagination counts\",\n    \"tagList\": [\n      \"testing\"\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{APIURL}}/articles",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Articles with limit (articlesCount pagination check)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var is200Response = responseCode.code === 200;",
+                  "",
+                  "tests['Response code is 200 OK'] = is200Response;",
+                  "",
+                  "if(is200Response){",
+                  "    var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "    tests['Response contains \"articles\" property'] = responseJSON.hasOwnProperty('articles');",
+                  "    tests['Response contains \"articlesCount\" property'] = responseJSON.hasOwnProperty('articlesCount');",
+                  "    tests['articlesCount is an integer'] = Number.isInteger(responseJSON.articlesCount);",
+                  "",
+                  "    // Core pagination test: limit=1 but total articles == 2",
+                  "    // articlesCount MUST be the total, not the page size",
+                  "    tests['Only 1 article returned (limit=1)'] = responseJSON.articles.length === 1;",
+                  "    tests['articlesCount is exactly 2 (total, not page size)'] = responseJSON.articlesCount === 2;",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{APIURL}}/articles?limit=1",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "All Articles with offset (articlesCount still total)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var is200Response = responseCode.code === 200;",
+                  "",
+                  "tests['Response code is 200 OK'] = is200Response;",
+                  "",
+                  "if(is200Response){",
+                  "    var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "    // offset=1, limit=1 with 2 total articles: should get 1 article back, count still 2",
+                  "    tests['Only 1 article returned'] = responseJSON.articles.length === 1;",
+                  "    tests['articlesCount is still 2 despite offset'] = responseJSON.articlesCount === 2;",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{APIURL}}/articles?limit=1&offset=1",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1"
+                },
+                {
+                  "key": "offset",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Second Article (pagination cleanup)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "tests['Response code is 204 or 200'] = responseCode.code === 204 || responseCode.code === 200;"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{APIURL}}/articles/{{slug2}}",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug2}}"
+              ]
+            }
+          }
         },
         {
           "name": "Feed",
@@ -648,6 +876,7 @@
                   "    tests['Response contains \"articles\" property'] = responseJSON.hasOwnProperty('articles');",
                   "    tests['Response contains \"articlesCount\" property'] = responseJSON.hasOwnProperty('articlesCount');",
                   "    tests['articlesCount is an integer'] = Number.isInteger(responseJSON.articlesCount);",
+                  "    tests['articlesCount equals articles.length when no pagination'] = responseJSON.articlesCount === responseJSON.articles.length;",
                   "",
                   "    if(responseJSON.articles.length){",
                   "        var article = responseJSON.articles[0];",
@@ -696,8 +925,13 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/feed",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "feed"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "feed"
+              ]
             }
           },
           "response": []
@@ -720,6 +954,7 @@
                   "    tests['Response contains \"articles\" property'] = responseJSON.hasOwnProperty('articles');",
                   "    tests['Response contains \"articlesCount\" property'] = responseJSON.hasOwnProperty('articlesCount');",
                   "    tests['articlesCount is an integer'] = Number.isInteger(responseJSON.articlesCount);",
+                  "    tests['articlesCount equals articles.length when no pagination'] = responseJSON.articlesCount === responseJSON.articles.length;",
                   "",
                   "    if(responseJSON.articles.length){",
                   "        var article = responseJSON.articles[0];",
@@ -768,8 +1003,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ]
             }
           },
           "response": []
@@ -792,6 +1031,7 @@
                   "    tests['Response contains \"articles\" property'] = responseJSON.hasOwnProperty('articles');",
                   "    tests['Response contains \"articlesCount\" property'] = responseJSON.hasOwnProperty('articlesCount');",
                   "    tests['articlesCount is an integer'] = Number.isInteger(responseJSON.articlesCount);",
+                  "    tests['articlesCount equals articles.length when no pagination'] = responseJSON.articlesCount === responseJSON.articles.length;",
                   "",
                   "    if(responseJSON.articles.length){",
                   "        var article = responseJSON.articles[0];",
@@ -840,8 +1080,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ]
             }
           },
           "response": []
@@ -912,8 +1156,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles?author={{USERNAME}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"],
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
               "query": [
                 {
                   "key": "author",
@@ -990,8 +1238,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles?author={{USERNAME}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"],
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
               "query": [
                 {
                   "key": "author",
@@ -1057,8 +1309,13 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}"
+              ]
             }
           },
           "response": []
@@ -1125,8 +1382,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles?tag=dragons",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"],
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
               "query": [
                 {
                   "key": "tag",
@@ -1194,8 +1455,13 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}"
+              ]
             }
           },
           "response": []
@@ -1257,8 +1523,14 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}/favorite",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}", "favorite"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}",
+                "favorite"
+              ]
             }
           },
           "response": []
@@ -1322,8 +1594,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles?favorited={{USERNAME}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"],
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
               "query": [
                 {
                   "key": "favorited",
@@ -1393,8 +1669,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles?favorited={{USERNAME}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles"],
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ],
               "query": [
                 {
                   "key": "favorited",
@@ -1461,8 +1741,14 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}/favorite",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}", "favorite"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}",
+                "favorite"
+              ]
             }
           },
           "response": []
@@ -1518,8 +1804,14 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}/comments",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}", "comments"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}",
+                "comments"
+              ]
             }
           },
           "response": []
@@ -1580,8 +1872,14 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}/comments",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}", "comments"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}",
+                "comments"
+              ]
             }
           },
           "response": []
@@ -1638,8 +1936,14 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}/comments",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}", "comments"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}",
+                "comments"
+              ]
             }
           },
           "response": []
@@ -1668,8 +1972,15 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}/comments/{{commentId}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}", "comments", "{{commentId}}"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}",
+                "comments",
+                "{{commentId}}"
+              ]
             }
           },
           "response": []
@@ -1698,8 +2009,13 @@
             },
             "url": {
               "raw": "{{APIURL}}/articles/{{slug}}",
-              "host": ["{{APIURL}}"],
-              "path": ["articles", "{{slug}}"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{slug}}"
+              ]
             }
           },
           "response": []
@@ -1711,7 +2027,9 @@
           "script": {
             "id": "67853a4a-e972-4573-a295-dad12a46a9d7",
             "type": "text/javascript",
-            "exec": [""]
+            "exec": [
+              ""
+            ]
           }
         },
         {
@@ -1719,7 +2037,9 @@
           "script": {
             "id": "3057f989-15e4-484e-b8fa-a041043d0ac0",
             "type": "text/javascript",
-            "exec": [""]
+            "exec": [
+              ""
+            ]
           }
         }
       ]
@@ -1771,8 +2091,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/users",
-              "host": ["{{APIURL}}"],
-              "path": ["users"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users"
+              ]
             }
           },
           "response": []
@@ -1830,8 +2154,13 @@
             },
             "url": {
               "raw": "{{APIURL}}/profiles/celeb_{{USERNAME}}",
-              "host": ["{{APIURL}}"],
-              "path": ["profiles", "celeb_{{USERNAME}}"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "profiles",
+                "celeb_{{USERNAME}}"
+              ]
             }
           },
           "response": []
@@ -1890,8 +2219,14 @@
             },
             "url": {
               "raw": "{{APIURL}}/profiles/celeb_{{USERNAME}}/follow",
-              "host": ["{{APIURL}}"],
-              "path": ["profiles", "celeb_{{USERNAME}}", "follow"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "profiles",
+                "celeb_{{USERNAME}}",
+                "follow"
+              ]
             }
           },
           "response": []
@@ -1950,11 +2285,406 @@
             },
             "url": {
               "raw": "{{APIURL}}/profiles/celeb_{{USERNAME}}/follow",
-              "host": ["{{APIURL}}"],
-              "path": ["profiles", "celeb_{{USERNAME}}", "follow"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "profiles",
+                "celeb_{{USERNAME}}",
+                "follow"
+              ]
             }
           },
           "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pagination",
+      "item": [
+        {
+          "name": "Follow celeb for feed test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "tests['Response code is 200 OK'] = responseCode.code === 200;"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{APIURL}}/profiles/celeb_{{USERNAME}}/follow",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "profiles",
+                "celeb_{{USERNAME}}",
+                "follow"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Celeb login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "tests['Response contains user'] = responseJSON.hasOwnProperty('user');",
+                  "pm.globals.set('celeb_token', responseJSON.user.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"user\": {\"email\": \"celeb_{{EMAIL}}\", \"password\": \"{{PASSWORD}}\"}}"
+            },
+            "url": {
+              "raw": "{{APIURL}}/users/login",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Celeb creates article 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "tests['Article created'] = responseCode.code === 201;",
+                  "pm.globals.set('celeb_slug1', responseJSON.article.slug);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{celeb_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"article\": {\"title\": \"Celeb article one\", \"description\": \"First celeb article for feed pagination\", \"body\": \"Content one\"}}"
+            },
+            "url": {
+              "raw": "{{APIURL}}/articles",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Celeb creates article 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "tests['Article created'] = responseCode.code === 201;",
+                  "pm.globals.set('celeb_slug2', responseJSON.article.slug);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{celeb_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"article\": {\"title\": \"Celeb article two\", \"description\": \"Second celeb article for feed pagination\", \"body\": \"Content two\"}}"
+            },
+            "url": {
+              "raw": "{{APIURL}}/articles",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Feed with limit (pagination check)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var is200Response = responseCode.code === 200;",
+                  "tests['Response code is 200 OK'] = is200Response;",
+                  "",
+                  "if(is200Response){",
+                  "    var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "    tests['Response contains \"articles\" property'] = responseJSON.hasOwnProperty('articles');",
+                  "    tests['Response contains \"articlesCount\" property'] = responseJSON.hasOwnProperty('articlesCount');",
+                  "",
+                  "    // Feed pagination: limit=1 but celeb has 2 articles",
+                  "    tests['Only 1 article returned (limit=1)'] = responseJSON.articles.length === 1;",
+                  "    tests['articlesCount is exactly 2 (total feed, not page size)'] = responseJSON.articlesCount === 2;",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{APIURL}}/articles/feed?limit=1",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "feed"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Feed with offset (pagination check)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var is200Response = responseCode.code === 200;",
+                  "tests['Response code is 200 OK'] = is200Response;",
+                  "",
+                  "if(is200Response){",
+                  "    var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "    // offset=1, limit=1: get 1 article back, total still 2",
+                  "    tests['Only 1 article returned'] = responseJSON.articles.length === 1;",
+                  "    tests['articlesCount is still 2 despite offset'] = responseJSON.articlesCount === 2;",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{APIURL}}/articles/feed?limit=1&offset=1",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "feed"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1"
+                },
+                {
+                  "key": "offset",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Celeb delete article 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "tests['Deleted'] = responseCode.code === 204 || responseCode.code === 200;"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{celeb_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{APIURL}}/articles/{{celeb_slug1}}",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{celeb_slug1}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Celeb delete article 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "tests['Deleted'] = responseCode.code === 204 || responseCode.code === 200;"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{celeb_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{APIURL}}/articles/{{celeb_slug2}}",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "articles",
+                "{{celeb_slug2}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unfollow celeb (cleanup)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "tests['Response code is 200 OK'] = responseCode.code === 200;"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{APIURL}}/profiles/celeb_{{USERNAME}}/follow",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "profiles",
+                "celeb_{{USERNAME}}",
+                "follow"
+              ]
+            }
+          }
         }
       ]
     },
@@ -2002,8 +2732,12 @@
             },
             "url": {
               "raw": "{{APIURL}}/tags",
-              "host": ["{{APIURL}}"],
-              "path": ["tags"]
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "tags"
+              ]
             }
           },
           "response": []
