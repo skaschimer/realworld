@@ -1983,7 +1983,19 @@
 							]
 						}
 					},
-					"response": []
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests['Response code is 204'] = responseCode.code === 204;",
+									""
+								]
+							}
+						}
+					]
 				},
 				{
 					"name": "Delete Article",
@@ -2018,7 +2030,19 @@
 							]
 						}
 					},
-					"response": []
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests['Response code is 204'] = responseCode.code === 204;",
+									""
+								]
+							}
+						}
+					]
 				}
 			],
 			"event": [
