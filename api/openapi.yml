@@ -8,7 +8,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: 1.1.1
+  version: 2.0.0
 tags:
   - name: Articles
   - name: Comments
@@ -105,6 +105,8 @@ paths:
           $ref: '#/components/responses/ProfileResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
   /profiles/{username}/follow:
@@ -126,6 +128,8 @@ paths:
           $ref: '#/components/responses/ProfileResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
       security:
@@ -148,6 +152,8 @@ paths:
           $ref: '#/components/responses/ProfileResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
       security:
@@ -242,6 +248,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/SingleArticleResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
     put:
@@ -264,6 +272,10 @@ paths:
           $ref: '#/components/responses/SingleArticleResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
       security:
@@ -287,6 +299,10 @@ paths:
           $ref: '#/components/responses/EmptyOkResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
       security:
@@ -310,6 +326,8 @@ paths:
           $ref: '#/components/responses/MultipleCommentsResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
     post:
@@ -332,6 +350,8 @@ paths:
           $ref: '#/components/responses/SingleCommentResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
       security:
@@ -362,6 +382,10 @@ paths:
           $ref: '#/components/responses/EmptyOkResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
       security:
@@ -385,6 +409,8 @@ paths:
           $ref: '#/components/responses/SingleArticleResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
       security:
@@ -407,6 +433,8 @@ paths:
           $ref: '#/components/responses/SingleArticleResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '422':
           $ref: '#/components/responses/GenericError'
       security:
@@ -608,14 +636,11 @@ components:
       type: object
       properties:
         errors:
-          required:
-            - body
           type: object
-          properties:
-            body:
-              type: array
-              items:
-                type: string
+          additionalProperties:
+            type: array
+            items:
+              type: string
   responses:
     TagsResponse:
       description: Tags
@@ -741,19 +766,54 @@ components:
       content: { }
     Unauthorized:
       description: Unauthorized
-      content: { }
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericErrorModel'
+          example:
+            errors:
+              token:
+                - "is missing"
     ConflictError:
       description: Conflict - resource already exists
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericErrorModel'
+          example:
+            errors:
+              username:
+                - "has already been taken"
+    Forbidden:
+      description: Forbidden. The error key identifies the resource type (article, comment, etc.)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericErrorModel'
+          example:
+            errors:
+              resource:
+                - "forbidden"
+    NotFound:
+      description: Not Found. The error key identifies the resource type (article, profile, comment, etc.)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericErrorModel'
+          example:
+            errors:
+              resource:
+                - "not found"
     GenericError:
       description: Unexpected error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/GenericErrorModel'
+          example:
+            errors:
+              title:
+                - "can't be blank"
   requestBodies:
     LoginUserRequest:
       required: true

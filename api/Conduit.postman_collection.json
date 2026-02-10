@@ -3007,7 +3007,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains username key'] = Array.isArray(responseJSON.errors['username']);",
+									"tests['username error is can\\'t be blank'] = responseJSON.errors['username'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -3048,7 +3052,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains email key'] = Array.isArray(responseJSON.errors['email']);",
+									"tests['email error is can\\'t be blank'] = responseJSON.errors['email'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -3089,7 +3097,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains password key'] = Array.isArray(responseJSON.errors['password']);",
+									"tests['password error is can\\'t be blank'] = responseJSON.errors['password'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -3130,7 +3142,10 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 409'] = responseCode.code === 409;"
+									"tests['Response code is 409'] = responseCode.code === 409;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains username or email conflict'] = (Array.isArray(responseJSON.errors['username']) && responseJSON.errors['username'][0] === 'has already been taken') || (Array.isArray(responseJSON.errors['email']) && responseJSON.errors['email'][0] === 'has already been taken');"
 								]
 							}
 						}
@@ -3171,7 +3186,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains email key'] = Array.isArray(responseJSON.errors['email']);",
+									"tests['email error is can\\'t be blank'] = responseJSON.errors['email'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -3213,7 +3232,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains password key'] = Array.isArray(responseJSON.errors['password']);",
+									"tests['password error is can\\'t be blank'] = responseJSON.errors['password'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -3255,9 +3278,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"var responseJSON = JSON.parse(responseBody);",
 									"tests['Response code is 401'] = responseCode.code === 401;",
-									"tests['Error message is invalid credentials'] = responseJSON.errors.body[0] === 'invalid credentials';"
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains credentials key'] = Array.isArray(responseJSON.errors['credentials']);",
+									"tests['credentials error is invalid'] = responseJSON.errors['credentials'][0] === 'invalid';"
 								]
 							}
 						}
@@ -3299,7 +3324,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -3340,7 +3369,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -3386,7 +3419,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -3427,7 +3464,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains title key'] = Array.isArray(responseJSON.errors['title']);",
+									"tests['title error is can\\'t be blank'] = responseJSON.errors['title'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -3472,7 +3513,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains description key'] = Array.isArray(responseJSON.errors['description']);",
+									"tests['description error is can\\'t be blank'] = responseJSON.errors['description'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -3517,7 +3562,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains body key'] = Array.isArray(responseJSON.errors['body']);",
+									"tests['body error is can\\'t be blank'] = responseJSON.errors['body'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -3609,7 +3658,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 409'] = responseCode.code === 409;"
+									"tests['Response code is 409'] = responseCode.code === 409;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains title key'] = Array.isArray(responseJSON.errors['title']);",
+									"tests['title error is has already been taken'] = responseJSON.errors['title'][0] === 'has already been taken';"
 								]
 							}
 						}
@@ -3654,7 +3707,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 404'] = responseCode.code === 404;"
+									"tests['Response code is 404'] = responseCode.code === 404;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains article key'] = Array.isArray(responseJSON.errors['article']);",
+									"tests['article error is not found'] = responseJSON.errors['article'][0] === 'not found';"
 								]
 							}
 						}
@@ -3696,7 +3753,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -3738,7 +3799,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 404'] = responseCode.code === 404;"
+									"tests['Response code is 404'] = responseCode.code === 404;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains article key'] = Array.isArray(responseJSON.errors['article']);",
+									"tests['article error is not found'] = responseJSON.errors['article'][0] === 'not found';"
 								]
 							}
 						}
@@ -3784,7 +3849,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -3822,7 +3891,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 404'] = responseCode.code === 404;"
+									"tests['Response code is 404'] = responseCode.code === 404;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains article key'] = Array.isArray(responseJSON.errors['article']);",
+									"tests['article error is not found'] = responseJSON.errors['article'][0] === 'not found';"
 								]
 							}
 						}
@@ -3864,7 +3937,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -3906,7 +3983,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -3949,7 +4030,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -3988,7 +4073,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -4031,7 +4120,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 422'] = responseCode.code === 422;"
+									"tests['Response code is 422'] = responseCode.code === 422;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains body key'] = Array.isArray(responseJSON.errors['body']);",
+									"tests['body error is can\\'t be blank'] = responseJSON.errors['body'][0] === \"can't be blank\";"
 								]
 							}
 						}
@@ -4127,7 +4220,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -4167,7 +4264,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 404'] = responseCode.code === 404;"
+									"tests['Response code is 404'] = responseCode.code === 404;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains article key'] = Array.isArray(responseJSON.errors['article']);",
+									"tests['article error is not found'] = responseJSON.errors['article'][0] === 'not found';"
 								]
 							}
 						}
@@ -4258,7 +4359,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 404'] = responseCode.code === 404;"
+									"tests['Response code is 404'] = responseCode.code === 404;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains profile key'] = Array.isArray(responseJSON.errors['profile']);",
+									"tests['profile error is not found'] = responseJSON.errors['profile'][0] === 'not found';"
 								]
 							}
 						}
@@ -4300,7 +4405,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -4343,7 +4452,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 401'] = responseCode.code === 401;"
+									"tests['Response code is 401'] = responseCode.code === 401;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains token key'] = Array.isArray(responseJSON.errors['token']);",
+									"tests['token error is is missing'] = responseJSON.errors['token'][0] === 'is missing';"
 								]
 							}
 						}
@@ -4473,7 +4586,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 403'] = responseCode.code === 403;"
+									"tests['Response code is 403'] = responseCode.code === 403;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains article key'] = Array.isArray(responseJSON.errors['article']);",
+									"tests['article error is forbidden'] = responseJSON.errors['article'][0] === 'forbidden';"
 								]
 							}
 						}
@@ -4515,7 +4632,11 @@
 							"script": {
 								"type": "text/javascript",
 								"exec": [
-									"tests['Response code is 403'] = responseCode.code === 403;"
+									"tests['Response code is 403'] = responseCode.code === 403;",
+									"var responseJSON = JSON.parse(responseBody);",
+									"tests['Response has errors object'] = typeof responseJSON.errors === 'object' && responseJSON.errors !== null;",
+									"tests['Errors contains article key'] = Array.isArray(responseJSON.errors['article']);",
+									"tests['article error is forbidden'] = responseJSON.errors['article'][0] === 'forbidden';"
 								]
 							}
 						}
