@@ -9,7 +9,7 @@ echo "Running Hurl tests against $HOST with uid=$UID_VAL"
 
 FILES=("$@")
 if [ ${#FILES[@]} -eq 0 ]; then
-  FILES=("$DIR"/*.hurl)
+  FILES=("$DIR"/hurl/*.hurl)
 fi
 
 hurl --test \

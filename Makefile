@@ -3,9 +3,9 @@
 	reference-implementation-setup-nitro-prepare \
 	reference-implementation-setup-db-generate \
 	reference-implementation-setup \
-	reference-implementation-run-for-postman \
-	reference-implementation-test-with-postman-and-already-launched-server \
-	reference-implementation-test-with-postman \
+	reference-implementation-run-for-hurl \
+	reference-implementation-test-with-hurl-and-already-launched-server \
+	reference-implementation-test-with-hurl \
 	running-processes-clean \
 	non-default-files-clean \
 	documentation-setup \
@@ -18,8 +18,8 @@
 help:
 	@echo "Reference Implementation:"
 	@echo "  reference-implementation-setup"
-	@echo "  reference-implementation-run-for-postman"
-	@echo "  reference-implementation-test-with-postman"
+	@echo "  reference-implementation-run-for-hurl"
+	@echo "  reference-implementation-test-with-hurl"
 	@echo "  running-processes-clean"
 	@echo "  non-default-files-clean"
 	@echo ""
@@ -54,23 +54,23 @@ reference-implementation-setup:
 ########################
 # Reference Implementation - Run
 
-reference-implementation-run-for-postman:  # WARNING clearly not production ready
+reference-implementation-run-for-hurl:  # WARNING clearly not production ready
 	JWT_SECRET=dxLmhnE0pRY2+vUlu+i5Pxh8LTxLBTgBWdp82W74mMs= npm -C apps/api run dev
 
 ########################
 # Reference Implementation - Tests
 
-reference-implementation-test-with-postman-and-already-launched-server:
-	DELAY_REQUEST=50 APIURL=http://localhost:3000/api api/run-api-tests.sh
+reference-implementation-test-with-hurl-and-already-launched-server:
+	HOST=http://localhost:3000/api api/run-api-tests-hurl.sh
 
-reference-implementation-test-with-postman:
+reference-implementation-test-with-hurl:
 	@set -e; \
 	JWT_SECRET=dxLmhnE0pRY2+vUlu+i5Pxh8LTxLBTgBWdp82W74mMs= npm -C apps/api run dev & \
 	SERVER_PID=$$!; \
 	trap "kill $$SERVER_PID 2>/dev/null || true" EXIT; \
 	sleep 0.3; \
 	kill -0 "$$SERVER_PID" 2>/dev/null || exit 4; \
-	make reference-implementation-test-with-postman-and-already-launched-server && ( \
+	make reference-implementation-test-with-hurl-and-already-launched-server && ( \
 		make running-processes-clean; echo -e '\n\033[0;32m    TESTS OK\033[0m\n' && exit 0 \
 	) || ( \
 		make running-processes-clean; echo -e '\n\033[0;31m    TESTS FAILED\033[0m\n' && exit 1 \

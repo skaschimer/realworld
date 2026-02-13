@@ -137,8 +137,8 @@ export default defineConfig({
                                 slug: 'specifications/backend/error-handling',
                             },
                             {
-                                label: 'Postman',
-                                slug: 'specifications/backend/postman',
+                                label: 'Hurl',
+                                slug: 'specifications/backend/hurl',
                             },
                             {
                                 label: 'Tests',
