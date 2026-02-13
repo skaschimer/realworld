@@ -19,10 +19,10 @@ script:post-response {
   expect(res.body.article.slug).to.eql(bru.getVar("slug"));
   expect(res.body.article.description).to.eql("Test description");
   expect(res.body.article.body).to.eql("Test body content");
-  expect(typeof res.body.article.createdAt).to.eql("string");
-  expect(typeof res.body.article.updatedAt).to.eql("string");
+  expect(Array.isArray(res.body.article.tagList)).to.eql(true);
+  expect(res.body.article.createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}/);
+  expect(res.body.article.updatedAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}/);
   expect(res.body.article.favorited).to.eql(false);
   expect(res.body.article.favoritesCount).to.eql(0);
   expect(res.body.article.author.username).to.eql("art_" + bru.getVar("uid"));
-  expect(Array.isArray(res.body.article.tagList)).to.eql(true);
 }

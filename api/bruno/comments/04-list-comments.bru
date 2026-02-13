@@ -23,4 +23,7 @@ script:post-response {
   expect(res.body.comments.length).to.eql(1);
   expect(res.body.comments[0].id).to.eql(bru.getVar("comment_id"));
   expect(res.body.comments[0].body).to.eql("Test comment body");
+  expect(res.body.comments[0].createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}/);
+  expect(res.body.comments[0].updatedAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}/);
+  expect(res.body.comments[0].author.username).to.eql("cmt_" + bru.getVar("uid"));
 }

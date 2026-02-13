@@ -30,7 +30,7 @@ script:post-response {
   bru.setVar("comment_id", res.body.comment.id);
   expect(Number.isInteger(res.body.comment.id)).to.eql(true);
   expect(res.body.comment.body).to.eql("Test comment body");
-  expect(typeof res.body.comment.createdAt).to.eql("string");
-  expect(typeof res.body.comment.updatedAt).to.eql("string");
+  expect(res.body.comment.createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}/);
+  expect(res.body.comment.updatedAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}/);
   expect(res.body.comment.author.username).to.eql("cmt_" + bru.getVar("uid"));
 }
