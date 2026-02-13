@@ -72,10 +72,20 @@ GET {{host}}/api/articles/feed
 Authorization: Token {{main_token}}
 HTTP 200
 [Asserts]
+jsonpath "$.articles" isCollection
+jsonpath "$.articlesCount" isInteger
 jsonpath "$.articlesCount" == 2
 jsonpath "$.articles" count == 2
-jsonpath "$.articles[0].author.username" == "feedc_{{uid}}"
+jsonpath "$.articles[0].title" isString
+jsonpath "$.articles[0].slug" isString
+jsonpath "$.articles[0].description" isString
 jsonpath "$.articles[0].body" not exists
+jsonpath "$.articles[0].tagList" isCollection
+jsonpath "$.articles[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].favorited" isBoolean
+jsonpath "$.articles[0].favoritesCount" isInteger
+jsonpath "$.articles[0].author.username" == "feedc_{{uid}}"
 
 # Feed with limit=1
 GET {{host}}/api/articles/feed?limit=1

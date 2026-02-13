@@ -47,6 +47,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.profile.username" == "celeb_{{uid}}"
+jsonpath "$.profile.bio" == null
+jsonpath "$.profile.image" == null
 jsonpath "$.profile.following" == true
 
 # Unfollow profile
@@ -55,6 +57,8 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.profile.username" == "celeb_{{uid}}"
+jsonpath "$.profile.bio" == null
+jsonpath "$.profile.image" == null
 jsonpath "$.profile.following" == false
 
 # Verify unfollow persisted
@@ -62,4 +66,7 @@ GET {{host}}/api/profiles/celeb_{{uid}}
 Authorization: Token {{token}}
 HTTP 200
 [Asserts]
+jsonpath "$.profile.username" == "celeb_{{uid}}"
+jsonpath "$.profile.bio" == null
+jsonpath "$.profile.image" == null
 jsonpath "$.profile.following" == false

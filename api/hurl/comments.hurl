@@ -37,8 +37,8 @@ HTTP 201
 [Asserts]
 jsonpath "$.comment.id" isInteger
 jsonpath "$.comment.body" == "Test comment body"
-jsonpath "$.comment.createdAt" isString
-jsonpath "$.comment.updatedAt" isString
+jsonpath "$.comment.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.comment.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.comment.author.username" == "cmt_{{uid}}"
 [Captures]
 comment_id: jsonpath "$.comment.id"
@@ -52,6 +52,9 @@ jsonpath "$.comments" isCollection
 jsonpath "$.comments" count == 1
 jsonpath "$.comments[0].id" == {{comment_id}}
 jsonpath "$.comments[0].body" == "Test comment body"
+jsonpath "$.comments[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.comments[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.comments[0].author.username" == "cmt_{{uid}}"
 
 # List comments without auth
 GET {{host}}/api/articles/{{slug}}/comments
@@ -59,6 +62,11 @@ HTTP 200
 [Asserts]
 jsonpath "$.comments" isCollection
 jsonpath "$.comments" count == 1
+jsonpath "$.comments[0].id" isInteger
+jsonpath "$.comments[0].body" == "Test comment body"
+jsonpath "$.comments[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.comments[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.comments[0].author.username" == "cmt_{{uid}}"
 
 # Delete comment
 DELETE {{host}}/api/articles/{{slug}}/comments/{{comment_id}}

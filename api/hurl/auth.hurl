@@ -30,6 +30,8 @@ HTTP 200
 [Asserts]
 jsonpath "$.user.username" == "auth_{{uid}}"
 jsonpath "$.user.email" == "auth_{{uid}}@test.com"
+jsonpath "$.user.bio" == null
+jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
 [Captures]
@@ -42,6 +44,8 @@ HTTP 200
 [Asserts]
 jsonpath "$.user.username" == "auth_{{uid}}"
 jsonpath "$.user.email" == "auth_{{uid}}@test.com"
+jsonpath "$.user.bio" == null
+jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
 
@@ -55,15 +59,24 @@ Authorization: Token {{token}}
 }
 HTTP 200
 [Asserts]
-jsonpath "$.user.bio" == "Updated bio"
 jsonpath "$.user.username" == "auth_{{uid}}"
+jsonpath "$.user.email" == "auth_{{uid}}@test.com"
+jsonpath "$.user.bio" == "Updated bio"
+jsonpath "$.user.image" == null
+jsonpath "$.user.token" isString
+jsonpath "$.user.token" not isEmpty
 
 # Verify update persisted
 GET {{host}}/api/user
 Authorization: Token {{token}}
 HTTP 200
 [Asserts]
+jsonpath "$.user.username" == "auth_{{uid}}"
+jsonpath "$.user.email" == "auth_{{uid}}@test.com"
 jsonpath "$.user.bio" == "Updated bio"
+jsonpath "$.user.image" == null
+jsonpath "$.user.token" isString
+jsonpath "$.user.token" not isEmpty
 
 # Update username and email
 PUT {{host}}/api/user
@@ -78,6 +91,8 @@ HTTP 200
 [Asserts]
 jsonpath "$.user.username" == "auth_{{uid}}_upd"
 jsonpath "$.user.email" == "auth_{{uid}}_upd@test.com"
+jsonpath "$.user.bio" == "Updated bio"
+jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
 [Captures]
@@ -90,3 +105,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.user.username" == "auth_{{uid}}_upd"
 jsonpath "$.user.email" == "auth_{{uid}}_upd@test.com"
+jsonpath "$.user.bio" == "Updated bio"
+jsonpath "$.user.image" == null
+jsonpath "$.user.token" isString
+jsonpath "$.user.token" not isEmpty

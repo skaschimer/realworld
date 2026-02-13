@@ -30,16 +30,32 @@ POST {{host}}/api/articles/{{slug}}/favorite
 Authorization: Token {{token}}
 HTTP 200
 [Asserts]
+jsonpath "$.article.title" isString
+jsonpath "$.article.slug" isString
+jsonpath "$.article.description" isString
+jsonpath "$.article.body" isString
+jsonpath "$.article.tagList" isCollection
+jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" == true
 jsonpath "$.article.favoritesCount" == 1
+jsonpath "$.article.author.username" == "fav_{{uid}}"
 
 # Verify favorite persists
 GET {{host}}/api/articles/{{slug}}
 Authorization: Token {{token}}
 HTTP 200
 [Asserts]
+jsonpath "$.article.title" isString
+jsonpath "$.article.slug" isString
+jsonpath "$.article.description" isString
+jsonpath "$.article.body" isString
+jsonpath "$.article.tagList" isCollection
+jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" == true
 jsonpath "$.article.favoritesCount" == 1
+jsonpath "$.article.author.username" == "fav_{{uid}}"
 
 # Articles filtered by favorited username
 GET {{host}}/api/articles?favorited=fav_{{uid}}
@@ -83,16 +99,32 @@ DELETE {{host}}/api/articles/{{slug}}/favorite
 Authorization: Token {{token}}
 HTTP 200
 [Asserts]
+jsonpath "$.article.title" isString
+jsonpath "$.article.slug" isString
+jsonpath "$.article.description" isString
+jsonpath "$.article.body" isString
+jsonpath "$.article.tagList" isCollection
+jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" == false
 jsonpath "$.article.favoritesCount" == 0
+jsonpath "$.article.author.username" == "fav_{{uid}}"
 
 # Verify unfavorite persists
 GET {{host}}/api/articles/{{slug}}
 Authorization: Token {{token}}
 HTTP 200
 [Asserts]
+jsonpath "$.article.title" isString
+jsonpath "$.article.slug" isString
+jsonpath "$.article.description" isString
+jsonpath "$.article.body" isString
+jsonpath "$.article.tagList" isCollection
+jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" == false
 jsonpath "$.article.favoritesCount" == 0
+jsonpath "$.article.author.username" == "fav_{{uid}}"
 
 # Cleanup
 DELETE {{host}}/api/articles/{{slug}}
