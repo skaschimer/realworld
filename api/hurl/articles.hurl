@@ -50,12 +50,18 @@ GET {{host}}/api/articles?author=art_{{uid}}
 HTTP 200
 [Asserts]
 jsonpath "$.articles" isCollection
+jsonpath "$.articlesCount" isInteger
 jsonpath "$.articlesCount" >= 1
-jsonpath "$.articles[0].author.username" == "art_{{uid}}"
 jsonpath "$.articles[0].title" isString
+jsonpath "$.articles[0].slug" isString
 jsonpath "$.articles[0].description" isString
 jsonpath "$.articles[0].body" not exists
 jsonpath "$.articles[0].tagList" isCollection
+jsonpath "$.articles[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].favorited" isBoolean
+jsonpath "$.articles[0].favoritesCount" isInteger
+jsonpath "$.articles[0].author.username" == "art_{{uid}}"
 
 # List all articles with auth
 GET {{host}}/api/articles
@@ -79,7 +85,17 @@ GET {{host}}/api/articles?tag=d_{{uid}}
 HTTP 200
 [Asserts]
 jsonpath "$.articles" isCollection
+jsonpath "$.articlesCount" isInteger
 jsonpath "$.articlesCount" >= 1
+jsonpath "$.articles[0].title" isString
+jsonpath "$.articles[0].slug" isString
+jsonpath "$.articles[0].description" isString
+jsonpath "$.articles[0].body" not exists
+jsonpath "$.articles[0].tagList" isCollection
+jsonpath "$.articles[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].favorited" isBoolean
+jsonpath "$.articles[0].favoritesCount" isInteger
 
 # List articles without auth
 GET {{host}}/api/articles
@@ -110,6 +126,13 @@ Authorization: Token {{token}}
     "body": "Updated body content"
   }
 }
+HTTP 200
+[Asserts]
+jsonpath "$.article.body" == "Updated body content"
+jsonpath "$.article.title" == "Test Article {{uid}}"
+
+# Verify update persisted
+GET {{host}}/api/articles/{{slug}}
 HTTP 200
 [Asserts]
 jsonpath "$.article.body" == "Updated body content"

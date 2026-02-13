@@ -46,7 +46,17 @@ GET {{host}}/api/articles?favorited=fav_{{uid}}
 HTTP 200
 [Asserts]
 jsonpath "$.articles" isCollection
+jsonpath "$.articlesCount" isInteger
 jsonpath "$.articlesCount" >= 1
+jsonpath "$.articles[0].title" isString
+jsonpath "$.articles[0].slug" isString
+jsonpath "$.articles[0].description" isString
+jsonpath "$.articles[0].body" not exists
+jsonpath "$.articles[0].tagList" isCollection
+jsonpath "$.articles[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].favorited" isBoolean
+jsonpath "$.articles[0].favoritesCount" isInteger
 jsonpath "$.articles[0].favoritesCount" >= 1
 
 # Articles filtered by favorited username with auth
@@ -55,7 +65,17 @@ Authorization: Token {{token}}
 HTTP 200
 [Asserts]
 jsonpath "$.articles" isCollection
+jsonpath "$.articlesCount" isInteger
 jsonpath "$.articlesCount" >= 1
+jsonpath "$.articles[0].title" isString
+jsonpath "$.articles[0].slug" isString
+jsonpath "$.articles[0].description" isString
+jsonpath "$.articles[0].body" not exists
+jsonpath "$.articles[0].tagList" isCollection
+jsonpath "$.articles[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.articles[0].favorited" isBoolean
+jsonpath "$.articles[0].favoritesCount" isInteger
 jsonpath "$.articles[0].favoritesCount" >= 1
 
 # Unfavorite article

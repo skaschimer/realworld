@@ -34,6 +34,8 @@ jsonpath "$.tags" isCollection
 jsonpath "$.tags" count >= 1
 jsonpath "$.tags" contains "h_{{uid}}"
 jsonpath "$.tags" contains "t_{{uid}}"
+jsonpath "$.tags[0]" isString
+jsonpath "$.tags[1]" isString
 
 # Cleanup
 DELETE {{host}}/api/articles/{{slug}}
