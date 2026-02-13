@@ -1,0 +1,20 @@
+meta {
+  name: Verify update persisted
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{host}}/api/articles/{{slug}}
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(res.body.article.body).to.eql("Updated body content");
+  expect(res.body.article.title).to.eql("Test Article " + bru.getVar("uid"));
+}

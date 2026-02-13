@@ -1,0 +1,24 @@
+meta {
+  name: Favorite article
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/api/articles/{{slug}}/favorite
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(res.body.article.favorited).to.eql(true);
+  expect(res.body.article.favoritesCount).to.eql(1);
+}

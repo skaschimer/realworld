@@ -1,0 +1,26 @@
+meta {
+  name: List comments
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{host}}/api/articles/{{slug}}/comments
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(Array.isArray(res.body.comments)).to.eql(true);
+  expect(res.body.comments.length).to.eql(1);
+  expect(res.body.comments[0].id).to.eql(bru.getVar("comment_id"));
+  expect(res.body.comments[0].body).to.eql("Test comment body");
+}

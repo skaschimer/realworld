@@ -1,0 +1,33 @@
+meta {
+  name: Create article duplicate title
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{host}}/api/articles
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token}}
+}
+
+body:json {
+  {
+    "article": {
+      "title": "Dup Article {{uid}}",
+      "description": "test",
+      "body": "test"
+    }
+  }
+}
+
+assert {
+  res.status: eq 409
+}
+
+script:post-response {
+  expect(res.body.errors.title[0]).to.eql("has already been taken");
+}

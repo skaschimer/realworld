@@ -1,0 +1,24 @@
+meta {
+  name: Verify username/email update persisted
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{host}}/api/user
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{updated_token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(res.body.user.username).to.eql("auth_" + bru.getVar("uid") + "_upd");
+  expect(res.body.user.email).to.eql("auth_" + bru.getVar("uid") + "_upd@test.com");
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Verify favorite persists
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{host}}/api/articles/{{slug}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(res.body.article.favorited).to.eql(true);
+  expect(res.body.article.favoritesCount).to.eql(1);
+}

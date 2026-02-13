@@ -1,0 +1,25 @@
+meta {
+  name: List by author with auth
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{host}}/api/articles?author=art_{{uid}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(Array.isArray(res.body.articles)).to.eql(true);
+  expect(res.body.articlesCount).to.be.at.least(1);
+  expect(res.body.articles[0].author.username).to.eql("art_" + bru.getVar("uid"));
+}

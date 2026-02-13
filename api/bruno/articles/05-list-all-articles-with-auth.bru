@@ -1,0 +1,24 @@
+meta {
+  name: List all articles with auth
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{host}}/api/articles
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(Array.isArray(res.body.articles)).to.eql(true);
+  expect(res.body.articlesCount).to.be.at.least(1);
+}

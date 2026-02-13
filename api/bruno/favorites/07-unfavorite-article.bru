@@ -1,0 +1,24 @@
+meta {
+  name: Unfavorite article
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{host}}/api/articles/{{slug}}/favorite
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(res.body.article.favorited).to.eql(false);
+  expect(res.body.article.favoritesCount).to.eql(0);
+}

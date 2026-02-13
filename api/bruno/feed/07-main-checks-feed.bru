@@ -1,0 +1,26 @@
+meta {
+  name: Main checks feed
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{host}}/api/articles/feed
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Token {{main_token}}
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  expect(res.body.articlesCount).to.eql(2);
+  expect(res.body.articles.length).to.eql(2);
+  expect(res.body.articles[0].author.username).to.eql("feedc_" + bru.getVar("uid"));
+  expect(res.body.articles[0]).to.not.have.property("body");
+}
