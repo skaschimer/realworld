@@ -36,6 +36,9 @@ Authorization: Token {{token}}
   }
 }
 HTTP 201
+[Asserts]
+jsonpath "$.article.title" == "Pagination 2 {{uid}}"
+jsonpath "$.article.slug" isString
 [Captures]
 slug2: jsonpath "$.article.slug"
 

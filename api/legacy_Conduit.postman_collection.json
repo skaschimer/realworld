@@ -10,60 +10,6 @@
 			"name": "Articles, Favorite, Comments",
 			"item": [
 				{
-					"name": "Create Second Article",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "e711dbf8-8065-4ba8-8b74-f1639a7d8208",
-								"type": "text/javascript",
-								"exec": [
-									"var responseJSON = JSON.parse(responseBody);",
-									"",
-									"tests['Response contains \"article\" property'] = responseJSON.hasOwnProperty('article');",
-									"",
-									"var article = responseJSON.article || {};",
-									"",
-									"tests['Article has \"title\" property'] = article.hasOwnProperty('title');",
-									"tests['Article has \"slug\" property'] = article.hasOwnProperty('slug');",
-									"pm.globals.set('slug2', article.slug);"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "X-Requested-With",
-								"value": "XMLHttpRequest"
-							},
-							{
-								"key": "Authorization",
-								"value": "Token {{token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"article\": {\n    \"title\": \"Second article for pagination test\",\n    \"description\": \"A second article to test articlesCount\",\n    \"body\": \"This article exists to verify pagination counts\",\n    \"tagList\": [\n      \"testing\"\n    ]\n  }\n}"
-						},
-						"url": {
-							"raw": "{{APIURL}}/articles",
-							"host": [
-								"{{APIURL}}"
-							],
-							"path": [
-								"articles"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "All Articles with limit (articlesCount pagination check)",
 					"event": [
 						{

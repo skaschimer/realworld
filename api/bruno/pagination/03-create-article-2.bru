@@ -30,4 +30,6 @@ assert {
 
 script:post-response {
   bru.setVar("slug2", res.body.article.slug);
+  expect(res.body.article.title).to.eql("Pagination 2 " + bru.getVar("uid"));
+  expect(typeof res.body.article.slug).to.eql("string");
 }
