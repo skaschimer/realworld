@@ -14,7 +14,7 @@ Make sure the right content type like `Content-Type: application/json; charset=u
     "email": "jake@jake.jake",
     "token": "jwt.token.here",
     "username": "jake",
-    "bio": "I work at statefarm",
+    "bio": null,
     "image": null
   }
 }

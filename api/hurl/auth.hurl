@@ -78,6 +78,80 @@ jsonpath "$.user.image" == null
 jsonpath "$.user.token" isString
 jsonpath "$.user.token" not isEmpty
 
+# Update user bio to empty string - should normalize to null
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "bio": ""
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.user.bio" == null
+
+# Verify empty string normalization persisted
+GET {{host}}/api/user
+Authorization: Token {{token}}
+HTTP 200
+[Asserts]
+jsonpath "$.user.bio" == null
+
+# Restore bio
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "bio": "Updated bio"
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.user.username" == "auth_{{uid}}"
+jsonpath "$.user.email" == "auth_{{uid}}@test.com"
+jsonpath "$.user.bio" == "Updated bio"
+jsonpath "$.user.image" == null
+jsonpath "$.user.token" isString
+jsonpath "$.user.token" not isEmpty
+
+# Update user image
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "image": "https://example.com/photo.jpg"
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.user.image" == "https://example.com/photo.jpg"
+
+# Verify image update persisted
+GET {{host}}/api/user
+Authorization: Token {{token}}
+HTTP 200
+[Asserts]
+jsonpath "$.user.image" == "https://example.com/photo.jpg"
+
+# Update image to empty string - should normalize to null
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "image": ""
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.user.image" == null
+
+# Verify image empty string normalization persisted
+GET {{host}}/api/user
+Authorization: Token {{token}}
+HTTP 200
+[Asserts]
+jsonpath "$.user.image" == null
+
 # Update username and email
 PUT {{host}}/api/user
 Authorization: Token {{token}}
