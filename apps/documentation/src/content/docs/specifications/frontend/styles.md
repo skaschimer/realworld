@@ -2,12 +2,8 @@
 title: Styles
 ---
 
-We created a custom Bootstrap 4 style & templates to ensure all frontends had consistent UI functionality. Our [starter kit](https://github.com/gothinkster/realworld-starter-kit) includes all the [templates & info required to get up and running](https://github.com/gothinkster/realworld-starter-kit/blob/master/FRONTEND_INSTRUCTIONS.md).
+The recommended approach is to use a self-contained CSS file that includes only the classes actually used by Conduit. See the [Angular implementation's styles.css](https://github.com/gothinkster/angular-realworld-example-app/blob/main/src/styles.css) for a reference implementation.
 
-Instead of having the Bootstrap theme included locally, we recommend loading the precompiled theme from our CDN (our [header template](/specifications/frontend/templates#header) does this by default):
+### Default Avatar
 
-```html
-<link rel="stylesheet" href="//demo.productionready.io/main.css" />
-```
-
-Alternatively, if you want to make modifications to the theme, check out the [theme's repo](https://github.com/gothinkster/conduit-bootstrap-template).
+When a user has no profile image, implementations should display the [default avatar](https://github.com/realworld-apps/realworld/blob/main/media/default-avatar.svg) (a smiley face icon).
