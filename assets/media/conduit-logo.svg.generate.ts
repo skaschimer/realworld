@@ -33,6 +33,6 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${x} ${y} ${width}
   ${path.toSVG(2)}
 </svg>`;
 
-const outPath = 'conduit.svg';
+const outPath = 'conduit-logo.svg';
 await Bun.write(outPath, svg);
 console.log(`Written to ${outPath} (${width.toFixed(1)} x ${height.toFixed(1)})`);
