@@ -47,6 +47,8 @@ POST {{host}}/api/users
   }
 }
 HTTP 201
+[Captures]
+token: jsonpath "$.user.token"
 
 # Register duplicate username
 POST {{host}}/api/users
@@ -126,3 +128,43 @@ PUT {{host}}/api/user
 HTTP 401
 [Asserts]
 jsonpath "$.errors.token[0]" == "is missing"
+
+# Update email to empty string - should reject
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "email": ""
+  }
+}
+HTTP 422
+
+# Update username to empty string - should reject
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "username": ""
+  }
+}
+HTTP 422
+
+# Update email to null - should reject
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "email": null
+  }
+}
+HTTP 422
+
+# Update username to null - should reject
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "username": null
+  }
+}
+HTTP 422

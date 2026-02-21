@@ -1,26 +1,17 @@
 meta {
-  name: Update username and email
+  name: Verify username/email update persisted
   type: http
-  seq: 13
+  seq: 20
 }
 
-put {
+get {
   url: {{host}}/api/user
-  body: json
+  body: none
   auth: none
 }
 
 headers {
-  Authorization: Token {{token}}
-}
-
-body:json {
-  {
-    "user": {
-      "username": "auth_{{uid}}_upd",
-      "email": "auth_{{uid}}_upd@test.com"
-    }
-  }
+  Authorization: Token {{updated_token}}
 }
 
 assert {
@@ -28,7 +19,6 @@ assert {
 }
 
 script:post-response {
-  bru.setVar("updated_token", res.body.user.token);
   expect(res.body.user.username).to.eql("auth_" + bru.getVar("uid") + "_upd");
   expect(res.body.user.email).to.eql("auth_" + bru.getVar("uid") + "_upd@test.com");
   expect(res.body.user.bio).to.eql("Updated bio");

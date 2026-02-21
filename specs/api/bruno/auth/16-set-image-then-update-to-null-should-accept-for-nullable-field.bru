@@ -1,7 +1,7 @@
 meta {
-  name: Update user image
+  name: Set image then update to null - should accept for nullable field
   type: http
-  seq: 9
+  seq: 16
 }
 
 put {
@@ -17,7 +17,7 @@ headers {
 body:json {
   {
     "user": {
-      "image": "https://example.com/photo.jpg"
+      "image": "https://example.com/temp.jpg"
     }
   }
 }
@@ -27,5 +27,5 @@ assert {
 }
 
 script:post-response {
-  expect(res.body.user.image).to.eql("https://example.com/photo.jpg");
+  expect(res.body.user.image).to.eql("https://example.com/temp.jpg");
 }

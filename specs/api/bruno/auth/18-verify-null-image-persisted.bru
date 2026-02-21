@@ -1,25 +1,17 @@
 meta {
-  name: Update image to empty string - should normalize to null
+  name: Verify null image persisted
   type: http
-  seq: 11
+  seq: 18
 }
 
-put {
+get {
   url: {{host}}/api/user
-  body: json
+  body: none
   auth: none
 }
 
 headers {
   Authorization: Token {{token}}
-}
-
-body:json {
-  {
-    "user": {
-      "image": ""
-    }
-  }
 }
 
 assert {

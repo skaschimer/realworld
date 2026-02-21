@@ -97,6 +97,37 @@ HTTP 200
 [Asserts]
 jsonpath "$.user.bio" == null
 
+# Restore bio then set to null
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "bio": "Temporary bio"
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.user.bio" == "Temporary bio"
+
+# Update user bio to null - should accept for nullable field
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "bio": null
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.user.bio" == null
+
+# Verify null bio persisted
+GET {{host}}/api/user
+Authorization: Token {{token}}
+HTTP 200
+[Asserts]
+jsonpath "$.user.bio" == null
+
 # Restore bio
 PUT {{host}}/api/user
 Authorization: Token {{token}}
@@ -146,6 +177,36 @@ HTTP 200
 jsonpath "$.user.image" == null
 
 # Verify image empty string normalization persisted
+GET {{host}}/api/user
+Authorization: Token {{token}}
+HTTP 200
+[Asserts]
+jsonpath "$.user.image" == null
+
+# Set image then update to null - should accept for nullable field
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "image": "https://example.com/temp.jpg"
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.user.image" == "https://example.com/temp.jpg"
+
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "image": null
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.user.image" == null
+
+# Verify null image persisted
 GET {{host}}/api/user
 Authorization: Token {{token}}
 HTTP 200
