@@ -2,7 +2,9 @@
 title: Styles
 ---
 
-The recommended approach is to use a self-contained CSS file that includes only the classes actually used by Conduit. See the [Angular implementation's styles.css](https://github.com/gothinkster/angular-realworld-example-app/blob/main/src/styles.css) for a reference implementation.
+All frontend implementations should use the shared [styles.css](https://github.com/realworld-apps/realworld/blob/main/assets/theme/styles.css) file from the main repository. This is a self-contained CSS file (Conduit Minimal CSS v4) that includes only the classes actually used by Conduit.
+
+The CSS classes it provides match the [templates](/specifications/frontend/templates) and the [E2E test selectors contract](https://github.com/realworld-apps/realworld/blob/main/specs/e2e/SELECTORS.md).
 
 ### Default Avatar
 
