@@ -6,4 +6,4 @@ The recommended approach is to use a self-contained CSS file that includes only 
 
 ### Default Avatar
 
-When a user has no profile image, implementations should display the [default avatar](https://github.com/realworld-apps/realworld/blob/main/media/default-avatar.svg) (a smiley face icon).
+When a user has no profile image, implementations should display the [default avatar](https://github.com/realworld-apps/realworld/blob/main/assets/media/default-avatar.svg) (a smiley face icon).

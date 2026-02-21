@@ -1,6 +1,6 @@
-![RealWorld Example Applications](media/realworld-dual-mode.png)
+![RealWorld Example Applications](assets/media/realworld-dual-mode.png)
 
-<p align="center" style="margin-top: 30px;"><img src="media/stacks_hr.gif"></p>
+<p align="center" style="margin-top: 30px;"><img src="assets/media/stacks_hr.gif"></p>
 
 ### See how [_the exact same_ Medium.com clone](https://demo.realworld.show) is built using different [frontends](https://codebase.show/projects/realworld?category=frontend) and [backends](https://codebase.show/projects/realworld?category=backend)
 
