@@ -70,7 +70,7 @@ reference-implementation-run-for-hurl:  # WARNING clearly not production ready
 # Reference Implementation - Tests
 
 reference-implementation-test-with-hurl-and-already-launched-server:
-	HOST=http://localhost:3000/api api/run-api-tests-hurl.sh
+	HOST=http://localhost:3000/api specs/api/run-api-tests-hurl.sh
 
 reference-implementation-test-with-hurl:
 	@set -e; \
@@ -86,7 +86,7 @@ reference-implementation-test-with-hurl:
 	)
 
 reference-implementation-test-with-bruno-and-already-launched-server:
-	HOST=http://localhost:3000/api api/run-api-tests-bruno.sh
+	HOST=http://localhost:3000/api specs/api/run-api-tests-bruno.sh
 
 reference-implementation-test-with-bruno:
 	@set -e; \
@@ -119,10 +119,10 @@ non-default-files-clean:
 # Bruno Collection
 
 bruno-generate:
-	bun api/hurl-to-bruno.js
+	bun specs/api/hurl-to-bruno.js
 
 bruno-check:
-	bun api/hurl-to-bruno.js --check
+	bun specs/api/hurl-to-bruno.js --check
 
 ########################
 # Documentation
