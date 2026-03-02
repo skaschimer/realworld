@@ -30,6 +30,8 @@ jsonpath "$.article.description" == "Test description"
 jsonpath "$.article.body" == "Test body content"
 jsonpath "$.article.tagList" contains "d_{{uid}}"
 jsonpath "$.article.tagList" contains "t_{{uid}}"
+jsonpath "$.article.tagList[0]" == "d_{{uid}}"
+jsonpath "$.article.tagList[1]" == "t_{{uid}}"
 jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T"
 jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T"
 jsonpath "$.article.favorited" == false
@@ -37,6 +39,8 @@ jsonpath "$.article.favoritesCount" == 0
 jsonpath "$.article.author.username" == "art_{{uid}}"
 [Captures]
 slug: jsonpath "$.article.slug"
+created_at: jsonpath "$.article.createdAt"
+updated_at: jsonpath "$.article.updatedAt"
 
 # List all articles
 GET {{host}}/api/articles
@@ -168,8 +172,8 @@ jsonpath "$.article.slug" == "{{slug}}"
 jsonpath "$.article.description" == "Test description"
 jsonpath "$.article.body" == "Updated body content"
 jsonpath "$.article.tagList" isCollection
-jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
-jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+jsonpath "$.article.createdAt" == "{{created_at}}"
+jsonpath "$.article.updatedAt" != "{{updated_at}}"
 jsonpath "$.article.favorited" isBoolean
 jsonpath "$.article.favoritesCount" isInteger
 jsonpath "$.article.author.username" == "art_{{uid}}"
