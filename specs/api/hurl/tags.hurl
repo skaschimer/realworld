@@ -30,7 +30,7 @@ slug: jsonpath "$.article.slug"
 GET {{host}}/api/tags
 HTTP 200
 [Asserts]
-jsonpath "$.tags" isCollection
+jsonpath "$.tags" isList
 jsonpath "$.tags" count >= 1
 jsonpath "$.tags" contains "h_{{uid}}"
 jsonpath "$.tags" contains "t_{{uid}}"

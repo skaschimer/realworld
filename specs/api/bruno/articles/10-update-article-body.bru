@@ -33,8 +33,8 @@ script:post-response {
   expect(res.body.article.body).to.eql("Updated body content");
   expect(Array.isArray(res.body.article.tagList)).to.eql(true);
   expect(res.body.article.createdAt).to.eql(bru.getVar("created_at"));
-  // UNHANDLED ASSERT: jsonpath "$.article.updatedAt" != "{{updated_at}}"
-  // UNHANDLED ASSERT: jsonpath "$.article.favorited" isBoolean
+  expect(res.body.article.updatedAt).to.not.eql(bru.getVar("updated_at"));
+  expect(typeof res.body.article.favorited).to.eql("boolean");
   expect(Number.isInteger(res.body.article.favoritesCount)).to.eql(true);
   expect(res.body.article.author.username).to.eql("art_" + bru.getVar("uid"));
 }

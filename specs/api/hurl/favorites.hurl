@@ -34,7 +34,7 @@ jsonpath "$.article.title" isString
 jsonpath "$.article.slug" isString
 jsonpath "$.article.description" isString
 jsonpath "$.article.body" isString
-jsonpath "$.article.tagList" isCollection
+jsonpath "$.article.tagList" isList
 jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" == true
@@ -50,7 +50,7 @@ jsonpath "$.article.title" isString
 jsonpath "$.article.slug" isString
 jsonpath "$.article.description" isString
 jsonpath "$.article.body" isString
-jsonpath "$.article.tagList" isCollection
+jsonpath "$.article.tagList" isList
 jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" == true
@@ -61,14 +61,14 @@ jsonpath "$.article.author.username" == "fav_{{uid}}"
 GET {{host}}/api/articles?favorited=fav_{{uid}}
 HTTP 200
 [Asserts]
-jsonpath "$.articles" isCollection
+jsonpath "$.articles" isList
 jsonpath "$.articlesCount" isInteger
 jsonpath "$.articlesCount" >= 1
 jsonpath "$.articles[0].title" isString
 jsonpath "$.articles[0].slug" isString
 jsonpath "$.articles[0].description" isString
 jsonpath "$.articles[0].body" not exists
-jsonpath "$.articles[0].tagList" isCollection
+jsonpath "$.articles[0].tagList" isList
 jsonpath "$.articles[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.articles[0].favorited" isBoolean
@@ -80,14 +80,14 @@ GET {{host}}/api/articles?favorited=fav_{{uid}}
 Authorization: Token {{token}}
 HTTP 200
 [Asserts]
-jsonpath "$.articles" isCollection
+jsonpath "$.articles" isList
 jsonpath "$.articlesCount" isInteger
 jsonpath "$.articlesCount" >= 1
 jsonpath "$.articles[0].title" isString
 jsonpath "$.articles[0].slug" isString
 jsonpath "$.articles[0].description" isString
 jsonpath "$.articles[0].body" not exists
-jsonpath "$.articles[0].tagList" isCollection
+jsonpath "$.articles[0].tagList" isList
 jsonpath "$.articles[0].createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.articles[0].updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.articles[0].favorited" isBoolean
@@ -103,7 +103,7 @@ jsonpath "$.article.title" isString
 jsonpath "$.article.slug" isString
 jsonpath "$.article.description" isString
 jsonpath "$.article.body" isString
-jsonpath "$.article.tagList" isCollection
+jsonpath "$.article.tagList" isList
 jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" == false
@@ -119,7 +119,7 @@ jsonpath "$.article.title" isString
 jsonpath "$.article.slug" isString
 jsonpath "$.article.description" isString
 jsonpath "$.article.body" isString
-jsonpath "$.article.tagList" isCollection
+jsonpath "$.article.tagList" isList
 jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" == false

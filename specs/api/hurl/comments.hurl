@@ -48,7 +48,7 @@ GET {{host}}/api/articles/{{slug}}/comments
 Authorization: Token {{token}}
 HTTP 200
 [Asserts]
-jsonpath "$.comments" isCollection
+jsonpath "$.comments" isList
 jsonpath "$.comments" count == 1
 jsonpath "$.comments[0].id" == {{comment_id}}
 jsonpath "$.comments[0].body" == "Test comment body"
@@ -60,7 +60,7 @@ jsonpath "$.comments[0].author.username" == "cmt_{{uid}}"
 GET {{host}}/api/articles/{{slug}}/comments
 HTTP 200
 [Asserts]
-jsonpath "$.comments" isCollection
+jsonpath "$.comments" isList
 jsonpath "$.comments" count == 1
 jsonpath "$.comments[0].id" isInteger
 jsonpath "$.comments[0].body" == "Test comment body"

@@ -291,7 +291,7 @@ function assertToJs(assertLine) {
   // jsonpath "$.x" matches "regex"
 
   const jpMatch = assertLine.match(/^jsonpath\s+"([^"]+)"\s+(.+)$/);
-  if (!jpMatch) return null;
+  if (!jpMatch) throw new Error(`Unhandled hurl assert (not jsonpath): ${assertLine}`);
 
   const jp = jpMatch[1];
   const rest = jpMatch[2].trim();
@@ -334,10 +334,28 @@ function assertToJs(assertLine) {
     return `expect(Number.isInteger(${jsPath})).to.eql(true);`;
   }
 
-  // isCollection
+  // isCollection (matches both arrays and objects)
   if (rest === "isCollection") {
     const jsPath = jsonpathToJs(jp);
+    return `expect(${jsPath}).to.not.be.null; expect(typeof ${jsPath}).to.eql("object");`;
+  }
+
+  // isList (arrays only)
+  if (rest === "isList") {
+    const jsPath = jsonpathToJs(jp);
     return `expect(Array.isArray(${jsPath})).to.eql(true);`;
+  }
+
+  // isObject (objects only, not arrays)
+  if (rest === "isObject") {
+    const jsPath = jsonpathToJs(jp);
+    return `expect(${jsPath}).to.not.be.null; expect(typeof ${jsPath}).to.eql("object"); expect(Array.isArray(${jsPath})).to.eql(false);`;
+  }
+
+  // isBoolean
+  if (rest === "isBoolean") {
+    const jsPath = jsonpathToJs(jp);
+    return `expect(typeof ${jsPath}).to.eql("boolean");`;
   }
 
   // contains "val" or contains bareVar
@@ -356,8 +374,8 @@ function assertToJs(assertLine) {
     return `expect(${jsPath}).to.match(/${matchesMatch[1]}/);`;
   }
 
-  // == or >= with value
-  const opMatch = rest.match(/^(==|>=)\s+(.+)$/);
+  // ==, !=, or >= with value
+  const opMatch = rest.match(/^(==|!=|>=)\s+(.+)$/);
   if (opMatch) {
     const op = opMatch[1];
     const rawVal = opMatch[2].trim();
@@ -369,12 +387,17 @@ function assertToJs(assertLine) {
         return `expect(${jsPath}).to.be.null;`;
       }
       return `expect(${jsPath}).to.eql(${val.expr});`;
+    } else if (op === "!=") {
+      if (val.isNull) {
+        return `expect(${jsPath}).to.not.be.null;`;
+      }
+      return `expect(${jsPath}).to.not.eql(${val.expr});`;
     } else if (op === ">=") {
       return `expect(${jsPath}).to.be.at.least(${val.expr});`;
     }
   }
 
-  return `// UNHANDLED ASSERT: ${assertLine}`;
+  throw new Error(`Unhandled hurl assert: ${assertLine}`);
 }
 
 // ─── Generate ───────────────────────────────────────────────────────────────
@@ -430,8 +453,7 @@ function generateBruFile(request, seq) {
   }
 
   for (const assertLine of request.asserts) {
-    const js = assertToJs(assertLine);
-    if (js) scriptLines.push(js);
+    scriptLines.push(assertToJs(assertLine));
   }
 
   if (scriptLines.length > 0) {
