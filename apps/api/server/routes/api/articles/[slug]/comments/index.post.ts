@@ -1,13 +1,11 @@
 import HttpException from "~/models/http-exception.model";
 import {definePrivateEventHandler} from "~/auth-event-handler";
+import {createCommentSchema} from '~/schemas/comment.schema';
+import {validateBody} from '~/utils/validate';
 
 export default definePrivateEventHandler(async (event, {auth}) => {
-    const {comment} = await readBody(event);
+    const {comment} = validateBody(createCommentSchema, await readBody(event));
     const slug = getRouterParam(event, 'slug');
-
-    if (!comment.body) {
-        throw new HttpException(422, {errors: {body: ["can't be blank"]}});
-    }
 
     const article = await usePrisma().article.findUnique({
         where: {

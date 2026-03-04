@@ -2,9 +2,11 @@ import HttpException from "~/models/http-exception.model";
 import articleMapper from "~/utils/article.mapper";
 import slugify from 'slugify';
 import {definePrivateEventHandler} from "~/auth-event-handler";
+import {updateArticleSchema} from '~/schemas/article.schema';
+import {validateBody} from '~/utils/validate';
 
 export default definePrivateEventHandler(async (event, {auth}) => {
-const {article} = await readBody(event);
+    const {article} = validateBody(updateArticleSchema, await readBody(event));
     const slug = getRouterParam(event, 'slug');
 
     let newSlug = null;

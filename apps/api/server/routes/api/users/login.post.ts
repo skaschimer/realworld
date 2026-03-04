@@ -1,19 +1,12 @@
 import HttpException from "~/models/http-exception.model";
 import {default as bcrypt} from 'bcryptjs';
+import {loginUserSchema} from '~/schemas/user.schema';
+import {validateBody} from '~/utils/validate';
 
 export default defineEventHandler(async (event) => {
-    const {user} = await readBody(event);
+    const {user} = validateBody(loginUserSchema, await readBody(event));
 
-    const email = user.email?.trim();
-    const password = user.password?.trim();
-
-    if (!email) {
-        throw new HttpException(422, {errors: {email: ["can't be blank"]}});
-    }
-
-    if (!password) {
-        throw new HttpException(422, {errors: {password: ["can't be blank"]}});
-    }
+    const {email, password} = user;
 
     const foundUser = await usePrisma().user.findUnique({
         where: {

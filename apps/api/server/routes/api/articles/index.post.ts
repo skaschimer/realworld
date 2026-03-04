@@ -2,24 +2,13 @@ import articleMapper from "~/utils/article.mapper";
 import HttpException from "~/models/http-exception.model";
 import slugify from 'slugify';
 import {definePrivateEventHandler} from "~/auth-event-handler";
+import {createArticleSchema} from '~/schemas/article.schema';
+import {validateBody} from '~/utils/validate';
 
 export default definePrivateEventHandler(async (event, {auth}) => {
-    const {article} = await readBody(event);
+    const {article} = validateBody(createArticleSchema, await readBody(event));
 
-    const { title, description, body, tagList } = article;
-    const tags = Array.isArray(tagList) ? tagList : [];
-
-    if (!title) {
-        throw new HttpException(422, { errors: { title: ["can't be blank"] } });
-    }
-
-    if (!description) {
-        throw new HttpException(422, { errors: { description: ["can't be blank"] } });
-    }
-
-    if (!body) {
-        throw new HttpException(422, { errors: { body: ["can't be blank"] } });
-    }
+    const {title, description, body, tagList} = article;
 
     const slug = `${slugify(title)}-${auth.id}`;
 
@@ -47,7 +36,7 @@ export default definePrivateEventHandler(async (event, {auth}) => {
             body,
             slug,
             tagList: {
-                connectOrCreate: tags.map((tag: string) => ({
+                connectOrCreate: tagList.map((tag: string) => ({
                     create: { name: tag },
                     where: { name: tag },
                 })),
