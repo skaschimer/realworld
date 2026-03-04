@@ -1,4 +1,3 @@
-import * as bcrypt from 'bcryptjs';
 import {definePrivateEventHandler} from "~/auth-event-handler";
 import {updateUserSchema} from '~/schemas/user.schema';
 import {validateBody} from '~/utils/validate';
@@ -11,7 +10,7 @@ export default definePrivateEventHandler(async (event, {auth}) => {
     const data: any = {};
     if (email !== undefined) data.email = email;
     if (username !== undefined) data.username = username;
-    if (password) data.password = await bcrypt.hash(password, 10);
+    if (password) data.password = await useHashPassword(password);
     if (image !== undefined) data.image = image;
     if (bio !== undefined) data.bio = bio;
 

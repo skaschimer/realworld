@@ -1,5 +1,4 @@
 import HttpException from "~/models/http-exception.model";
-import {default as bcrypt} from 'bcryptjs';
 import {registerUserSchema} from '~/schemas/user.schema';
 import {validateBody} from '~/utils/validate';
 
@@ -10,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
     await checkUserUniqueness(email, username);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await useHashPassword(password);
 
     const createdUser = await usePrisma().user.create({
         data: {
