@@ -11,7 +11,6 @@ export default definePrivateEventHandler(async (event, {auth}) => {
         },
     });
 
-    // TODO fix query
     const articles = await usePrisma().article.findMany({
         where: {
             author: {
@@ -36,10 +35,10 @@ export default definePrivateEventHandler(async (event, {auth}) => {
                 select: {
                     username: true,
                     image: true,
-                    followedBy: true,
+                    followedBy: { select: { id: true } },
                 },
             },
-            favoritedBy: true,
+            favoritedBy: { select: { id: true } },
             _count: {
                 select: {
                     favoritedBy: true,
