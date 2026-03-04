@@ -25,7 +25,6 @@ export default definePrivateEventHandler(async (event, {auth}) => {
         take: Number(query.limit) || 10,
         omit: {
             body: true,
-            updatedAt: true,
         },
         include: {
             tagList: {

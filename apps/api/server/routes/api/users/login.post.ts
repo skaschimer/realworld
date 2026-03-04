@@ -45,9 +45,9 @@ export default defineEventHandler(async (event) => {
         }
     }
 
-    throw new HttpException(403, {
+    throw new HttpException(401, {
         errors: {
-            'email or password': ['is invalid'],
+            credentials: ['invalid'],
         },
     });
 });

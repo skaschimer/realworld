@@ -18,6 +18,10 @@ export default definePrivateEventHandler(async (event, {auth}) => {
         },
     });
 
+    if (!article) {
+        throw new HttpException(404, {errors: {article: ['not found']}});
+    }
+
     const createdComment = await usePrisma().comment.create({
         data: {
             body: comment.body,
@@ -44,6 +48,7 @@ export default definePrivateEventHandler(async (event, {auth}) => {
         },
     });
 
+    setResponseStatus(event, 201);
     return {
         comment: {
             id: createdComment.id,

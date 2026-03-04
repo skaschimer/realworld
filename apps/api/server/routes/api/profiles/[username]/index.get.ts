@@ -15,8 +15,8 @@ export default definePrivateEventHandler(async (event, {auth}) => {
     });
 
     if (!profile) {
-        throw new HttpException(404, {});
+        throw new HttpException(404, {errors: {profile: ['not found']}});
     }
 
-    return {profile: profileMapper(profile, auth.id)};
+    return {profile: profileMapper(profile, auth?.id)};
 }, {requireAuth: false});

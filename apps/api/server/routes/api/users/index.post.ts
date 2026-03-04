@@ -43,6 +43,7 @@ export default defineEventHandler(async (event) => {
         },
     });
 
+    setResponseStatus(event, 201);
     return {
         user: {
             ...createdUser,
@@ -71,7 +72,7 @@ const checkUserUniqueness = async (email: string, username: string) => {
     });
 
     if (existingUserByEmail || existingUserByUsername) {
-        throw new HttpException(422, {
+        throw new HttpException(409, {
             errors: {
                 ...(existingUserByEmail ? {email: ['has already been taken']} : {}),
                 ...(existingUserByUsername ? {username: ['has already been taken']} : {}),

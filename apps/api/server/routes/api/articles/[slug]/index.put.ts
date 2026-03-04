@@ -24,13 +24,11 @@ const {article} = await readBody(event);
     });
 
     if (!existingArticle) {
-        throw new HttpException(404, {});
+        throw new HttpException(404, {errors: {article: ['not found']}});
     }
 
     if (existingArticle.author.id !== auth.id) {
-        throw new HttpException(403, {
-            message: 'You are not authorized to update this article',
-        });
+        throw new HttpException(403, {errors: {article: ['forbidden']}});
     }
 
     if (article.title) {

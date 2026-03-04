@@ -26,7 +26,7 @@ export function definePrivateEventHandler<T>(
             throw createError({
                 status: 401,
                 statusMessage: 'Unauthorized',
-                message: 'Missing authentication token'
+                data: {errors: {token: ['is missing']}},
             });
         }
 

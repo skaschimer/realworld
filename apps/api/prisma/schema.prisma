@@ -1,11 +1,10 @@
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["omitApi"]
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 model Article {
@@ -45,7 +44,7 @@ model User {
   email      String    @unique
   username   String    @unique
   password   String
-  image      String?   @default("https://api.realworld.io/images/smiley-cyrus.jpeg")
+  image      String?
   bio        String?
   articles   Article[] @relation("UserArticles")
   favorites  Article[] @relation("UserFavorites")

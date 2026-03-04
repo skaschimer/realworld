@@ -19,17 +19,18 @@ const slug = getRouterParam(event, 'slug');
     });
 
     if (!existingArticle) {
-        throw new HttpException(404, {});
+        throw new HttpException(404, {errors: {article: ['not found']}});
     }
 
     if (existingArticle.author.id !== auth.id) {
-        throw new HttpException(403, {
-            message: 'You are not authorized to delete this article',
-        });
+        throw new HttpException(403, {errors: {article: ['forbidden']}});
     }
     await usePrisma().article.delete({
         where: {
             slug,
         },
     });
+
+    setResponseStatus(event, 204);
+    return null;
 });

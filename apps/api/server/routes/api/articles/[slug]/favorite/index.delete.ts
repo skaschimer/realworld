@@ -1,9 +1,15 @@
+import HttpException from "~/models/http-exception.model";
 import profileMapper from "~/utils/profile.utils";
 import {Tag} from "~/models/tag.model";
 import {definePrivateEventHandler} from "~/auth-event-handler";
 
 export default definePrivateEventHandler(async (event, {auth}) => {
     const slug = getRouterParam(event, "slug");
+
+    const existing = await usePrisma().article.findUnique({ where: { slug } });
+    if (!existing) {
+        throw new HttpException(404, {errors: {article: ['not found']}});
+    }
 
     const { _count, ...article } = await usePrisma().article.update({
         where: {

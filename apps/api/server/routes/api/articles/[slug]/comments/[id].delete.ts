@@ -2,33 +2,38 @@ import HttpException from "~/models/http-exception.model";
 import {definePrivateEventHandler} from "~/auth-event-handler";
 
 export default definePrivateEventHandler(async (event, {auth}) => {
+    const slug = getRouterParam(event, 'slug');
     const id = Number(getRouterParam(event, 'id'));
+
+    const article = await usePrisma().article.findUnique({
+        where: { slug },
+        select: { id: true },
+    });
+
+    if (!article) {
+        throw new HttpException(404, {errors: {article: ['not found']}});
+    }
 
     const comment = await usePrisma().comment.findFirst({
         where: {
             id,
-            author: {
-                id: auth.id,
-            },
+            articleId: article.id,
         },
         select: {
             author: {
                 select: {
                     id: true,
-                    username: true,
                 },
             },
         },
     });
 
     if (!comment) {
-        throw new HttpException(404, {});
+        throw new HttpException(404, {errors: {comment: ['not found']}});
     }
 
     if (comment.author.id !== auth.id) {
-        throw new HttpException(403, {
-            message: 'You are not authorized to delete this comment',
-        });
+        throw new HttpException(403, {errors: {comment: ['forbidden']}});
     }
 
     await usePrisma().comment.delete({
@@ -36,4 +41,7 @@ export default definePrivateEventHandler(async (event, {auth}) => {
             id,
         },
     });
+
+    setResponseStatus(event, 204);
+    return null;
 });

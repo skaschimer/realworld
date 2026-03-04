@@ -1,33 +1,15 @@
+import HttpException from "~/models/http-exception.model";
 import {definePrivateEventHandler} from "~/auth-event-handler";
 
 export default definePrivateEventHandler(async (event, {auth}) => {
     const slug = getRouterParam(event, 'slug');
 
-    const queries = [];
-
-    queries.push({
-        author: {
-            demo: true,
-        },
-    });
-
-    if (auth?.id) {
-        queries.push({
-            author: {
-                id: auth.id,
-            },
-        });
-    }
-
-    const comments = await usePrisma().article.findUnique({
+    const article = await usePrisma().article.findUnique({
         where: {
             slug,
         },
         include: {
             comments: {
-                where: {
-                    OR: queries,
-                },
                 select: {
                     id: true,
                     createdAt: true,
@@ -46,13 +28,17 @@ export default definePrivateEventHandler(async (event, {auth}) => {
         },
     });
 
-    const result = comments?.comments.map((comment: any) => ({
+    if (!article) {
+        throw new HttpException(404, {errors: {article: ['not found']}});
+    }
+
+    const result = article.comments.map((comment: any) => ({
         ...comment,
         author: {
             username: comment.author.username,
             bio: comment.author.bio,
             image: comment.author.image,
-            following: comment.author.followedBy.some((follow: any) => follow.id === auth.id),
+            following: comment.author.followedBy.some((follow: any) => follow.id === auth?.id),
         },
     }));
 

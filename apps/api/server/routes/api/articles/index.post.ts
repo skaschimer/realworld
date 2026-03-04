@@ -33,7 +33,7 @@ export default definePrivateEventHandler(async (event, {auth}) => {
     });
 
     if (existingTitle) {
-        throw new HttpException(422, { errors: { title: ['must be unique'] } });
+        throw new HttpException(409, { errors: { title: ['has already been taken'] } });
     }
 
     const {
@@ -81,5 +81,6 @@ export default definePrivateEventHandler(async (event, {auth}) => {
         },
     });
 
+    setResponseStatus(event, 201);
     return {article: articleMapper(createdArticle, auth.id)};
 });
