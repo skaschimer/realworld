@@ -5,6 +5,7 @@
 	reference-implementation-setup-db-push \
 	reference-implementation-setup \
 	reference-implementation-run-for-hurl \
+	reference-implementation-unit-test \
 	reference-implementation-test-with-hurl-and-already-launched-server \
 	reference-implementation-test-with-hurl \
 	reference-implementation-test-with-bruno-and-already-launched-server \
@@ -24,6 +25,7 @@ help:
 	@echo "Reference Implementation:"
 	@echo "  reference-implementation-setup"
 	@echo "  reference-implementation-run-for-hurl"
+	@echo "  reference-implementation-unit-test"
 	@echo "  reference-implementation-test-with-hurl"
 	@echo "  reference-implementation-test-with-bruno"
 	@echo "  running-processes-clean"
@@ -71,6 +73,12 @@ reference-implementation-setup:
 
 reference-implementation-run-for-hurl:  # WARNING clearly not production ready
 	cd apps/api && JWT_SECRET=dxLmhnE0pRY2+vUlu+i5Pxh8LTxLBTgBWdp82W74mMs= bun run dev
+
+########################
+# Reference Implementation - Unit Tests
+
+reference-implementation-unit-test:
+	cd apps/api && bun test
 
 ########################
 # Reference Implementation - Tests

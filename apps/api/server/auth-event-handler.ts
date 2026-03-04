@@ -1,4 +1,4 @@
-import {default as jwt} from "jsonwebtoken";
+import {useVerifyToken} from '~/utils/verify-token';
 
 export interface PrivateContext {
     auth: {
@@ -11,7 +11,6 @@ export function definePrivateEventHandler<T>(
     options: { requireAuth: boolean } = {requireAuth: true}
 ) {
     return defineEventHandler(async (event) => {
-        // you can check request hmac, user, token, etc..
         const header = getHeader(event, 'authorization');
         let token;
 
@@ -31,27 +30,13 @@ export function definePrivateEventHandler<T>(
         }
 
         if (token) {
-            const verified = jwt.verify(token, process.env.JWT_SECRET);
+            const auth = useVerifyToken(token);
 
-            if (!verified) {
-                throw createError({
-                    status: 403,
-                    statusMessage: 'Unauthorized',
-                    message: 'Invalid authentication token'
-                });
-            }
-
-            return handler(event, {
-                auth: {
-                    id: Number(verified.user.id)
-                },
-            })
+            return handler(event, {auth});
         } else {
             return handler(event, {
                 auth: null,
             })
         }
-
-
     })
 }

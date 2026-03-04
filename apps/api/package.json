@@ -7,7 +7,8 @@
     "preview": "bun .output/server/index.mjs",
     "start": "bun .output/server/index.mjs",
     "db:generate": "bun x prisma generate",
-    "db:push": "bun x prisma db push"
+    "db:push": "bun x prisma db push",
+    "test": "bun test"
   },
   "devDependencies": {
     "@ngneat/falso": "^5.0.0",
