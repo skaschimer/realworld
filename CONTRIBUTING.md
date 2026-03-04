@@ -121,7 +121,7 @@ from the master (upstream) repository:
 
 ## <a name="commit"></a> Commit Message Guidelines
 
-> These guidelines have been added to the project starting from <include date>
+> These guidelines have been added to the project starting from February 2025
 
 We have very precise rules over how our git commit messages can be formatted. This leads to **more
 readable messages** that are easy to follow when looking through the **project history**.
