@@ -23,6 +23,7 @@ coverage
 
 # Build Outputs
 .next/
+.nitro/
 out/
 build
 dist
