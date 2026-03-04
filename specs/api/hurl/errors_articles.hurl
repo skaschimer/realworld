@@ -107,12 +107,12 @@ HTTP 422
 [Asserts]
 jsonpath "$.errors.body[0]" == "can't be blank"
 
-# Create article for duplicate test
+# Create article for cleanup test
 POST {{host}}/api/articles
 Authorization: Token {{token}}
 {
   "article": {
-    "title": "Dup Article {{uid}}",
+    "title": "Cleanup Article {{uid}}",
     "description": "test",
     "body": "test"
   }
@@ -120,20 +120,6 @@ Authorization: Token {{token}}
 HTTP 201
 [Captures]
 slug: jsonpath "$.article.slug"
-
-# Create article duplicate title
-POST {{host}}/api/articles
-Authorization: Token {{token}}
-{
-  "article": {
-    "title": "Dup Article {{uid}}",
-    "description": "test",
-    "body": "test"
-  }
-}
-HTTP 409
-[Asserts]
-jsonpath "$.errors.title[0]" == "has already been taken"
 
 # Update unknown slug
 PUT {{host}}/api/articles/unknown-slug-{{uid}}

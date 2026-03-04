@@ -4,12 +4,11 @@ import slugify from 'slugify';
 import {definePrivateEventHandler} from "~/auth-event-handler";
 import {updateArticleSchema} from '~/schemas/article.schema';
 import {validateBody} from '~/utils/validate';
+import {handleUniqueConstraintError} from '~/utils/prisma-errors';
 
 export default definePrivateEventHandler(async (event, {auth}) => {
     const {article} = validateBody(updateArticleSchema, await readBody(event));
     const slug = getRouterParam(event, 'slug');
-
-    let newSlug = null;
 
     const existingArticle = await usePrisma().article.findFirst({
         where: {
@@ -33,24 +32,7 @@ export default definePrivateEventHandler(async (event, {auth}) => {
         throw new HttpException(403, {errors: {article: ['forbidden']}});
     }
 
-    if (article.title) {
-        newSlug = `${slugify(article.title)}-${auth.id}`;
-
-        if (newSlug !== slug) {
-            const existingTitle = await usePrisma().article.findFirst({
-                where: {
-                    slug: newSlug,
-                },
-                select: {
-                    slug: true,
-                },
-            });
-
-            if (existingTitle) {
-                throw new HttpException(422, { errors: { title: ['must be unique'] } });
-            }
-        }
-    }
+    const newSlug = article.title ? `${slugify(article.title)}-${crypto.randomUUID().slice(0, 8)}` : null;
 
     const tagList =
         Array.isArray(article.tagList) && article.tagList?.length
@@ -62,44 +44,49 @@ export default definePrivateEventHandler(async (event, {auth}) => {
 
     await disconnectArticlesTags(slug);
 
-    const updatedArticle = await usePrisma().article.update({
-        where: {
-            slug,
-        },
-        data: {
-            ...(article.title ? { title: article.title } : {}),
-            ...(article.body ? { body: article.body } : {}),
-            ...(article.description ? { description: article.description } : {}),
-            ...(newSlug ? { slug: newSlug } : {}),
-            updatedAt: new Date(),
-            tagList: {
-                connectOrCreate: tagList,
+    try {
+        const updatedArticle = await usePrisma().article.update({
+            where: {
+                slug,
             },
-        },
-        include: {
-            tagList: {
-                select: {
-                    name: true,
+            data: {
+                ...(article.title ? { title: article.title } : {}),
+                ...(article.body ? { body: article.body } : {}),
+                ...(article.description ? { description: article.description } : {}),
+                ...(newSlug ? { slug: newSlug } : {}),
+                updatedAt: new Date(),
+                tagList: {
+                    connectOrCreate: tagList,
                 },
             },
-            author: {
-                select: {
-                    username: true,
-                    bio: true,
-                    image: true,
-                    followedBy: true,
+            include: {
+                tagList: {
+                    select: {
+                        name: true,
+                    },
+                },
+                author: {
+                    select: {
+                        username: true,
+                        bio: true,
+                        image: true,
+                        followedBy: true,
+                    },
+                },
+                favoritedBy: true,
+                _count: {
+                    select: {
+                        favoritedBy: true,
+                    },
                 },
             },
-            favoritedBy: true,
-            _count: {
-                select: {
-                    favoritedBy: true,
-                },
-            },
-        },
-    });
+        });
 
-    return {article: articleMapper(updatedArticle, auth.id)};
+        return {article: articleMapper(updatedArticle, auth.id)};
+    } catch (e) {
+        handleUniqueConstraintError(e, {slug: ['has already been taken']});
+        throw e;
+    }
 });
 
 const disconnectArticlesTags = async (slug: string) => {
