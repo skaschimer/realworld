@@ -6,7 +6,7 @@ import {validateBody} from '~/utils/validate';
 export default defineEventHandler(async (event) => {
     const {user} = validateBody(registerUserSchema, await readBody(event));
 
-    const {email, username, password, image, bio, demo} = user;
+    const {email, username, password, image, bio} = user;
 
     await checkUserUniqueness(email, username);
 
@@ -19,7 +19,6 @@ export default defineEventHandler(async (event) => {
             password: hashedPassword,
             ...(image ? {image} : {}),
             ...(bio ? {bio} : {}),
-            ...(demo ? {demo} : {}),
         },
         select: {
             id: true,

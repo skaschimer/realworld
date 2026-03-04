@@ -7,7 +7,6 @@ export const registerUserSchema = z.object({
         password: z.string().trim().min(1, "can't be blank"),
         image: z.string().optional(),
         bio: z.string().optional(),
-        demo: z.boolean().optional(),
     }),
 });
 
