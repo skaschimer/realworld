@@ -9,7 +9,7 @@ const articleMapper = (article: any, id?: number) => ({
   createdAt: article.createdAt,
   updatedAt: article.updatedAt,
   favorited: article.favoritedBy.some((item: any) => item.id === id),
-  favoritesCount: article.favoritedBy.length,
+  favoritesCount: article._count.favoritedBy,
   author: authorMapper(article.author, id),
 });
 
