@@ -23,6 +23,7 @@ export default definePrivateEventHandler(async (event, {auth}) => {
                 description,
                 body,
                 slug,
+                // connectOrCreate issues one SELECT + conditional INSERT per tag (not batched, but ok for now)
                 tagList: {
                     connectOrCreate: tagList.map((tag: string) => ({
                         create: { name: tag },

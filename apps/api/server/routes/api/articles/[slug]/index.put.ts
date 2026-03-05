@@ -42,44 +42,48 @@ export default definePrivateEventHandler(async (event, {auth}) => {
             }))
             : [];
 
-    await disconnectArticlesTags(slug);
-
     try {
-        const updatedArticle = await usePrisma().article.update({
-            where: {
-                slug,
-            },
-            data: {
-                ...(article.title ? { title: article.title } : {}),
-                ...(article.body ? { body: article.body } : {}),
-                ...(article.description ? { description: article.description } : {}),
-                ...(newSlug ? { slug: newSlug } : {}),
-                updatedAt: new Date(),
-                tagList: {
-                    connectOrCreate: tagList,
-                },
-            },
-            include: {
-                tagList: {
-                    select: {
-                        name: true,
+        const updatedArticle = await usePrisma().$transaction(async (tx) => {
+            await tx.article.update({
+                where: { slug },
+                data: { tagList: { set: [] } },
+            });
+
+            return tx.article.update({
+                where: { slug },
+                data: {
+                    ...(article.title ? { title: article.title } : {}),
+                    ...(article.body ? { body: article.body } : {}),
+                    ...(article.description ? { description: article.description } : {}),
+                    ...(newSlug ? { slug: newSlug } : {}),
+                    updatedAt: new Date(),
+                    // connectOrCreate issues one SELECT + conditional INSERT per tag (not batched, but ok for now)
+                    tagList: {
+                        connectOrCreate: tagList,
                     },
                 },
-                author: {
-                    select: {
-                        username: true,
-                        bio: true,
-                        image: true,
-                        followedBy: true,
+                include: {
+                    tagList: {
+                        select: {
+                            name: true,
+                        },
+                    },
+                    author: {
+                        select: {
+                            username: true,
+                            bio: true,
+                            image: true,
+                            followedBy: true,
+                        },
+                    },
+                    favoritedBy: true,
+                    _count: {
+                        select: {
+                            favoritedBy: true,
+                        },
                     },
                 },
-                favoritedBy: true,
-                _count: {
-                    select: {
-                        favoritedBy: true,
-                    },
-                },
-            },
+            });
         });
 
         return {article: articleMapper(updatedArticle, auth.id)};
@@ -88,16 +92,3 @@ export default definePrivateEventHandler(async (event, {auth}) => {
         throw e;
     }
 });
-
-const disconnectArticlesTags = async (slug: string) => {
-    await usePrisma().article.update({
-        where: {
-            slug,
-        },
-        data: {
-            tagList: {
-                set: [],
-            },
-        },
-    });
-};
