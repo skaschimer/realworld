@@ -1,11 +1,11 @@
 meta {
-  name: Cleanup
+  name: DELETE {{slug2}}
   type: http
-  seq: 19
+  seq: 20
 }
 
 delete {
-  url: {{host}}/api/articles/{{slug1}}
+  url: {{host}}/api/articles/{{slug2}}
   body: none
   auth: none
 }

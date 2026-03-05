@@ -1,7 +1,7 @@
 meta {
-  name: Create article for duplicate test
+  name: POST articles
   type: http
-  seq: 12
+  seq: 13
 }
 
 post {
@@ -17,9 +17,9 @@ headers {
 body:json {
   {
     "article": {
-      "title": "Dup Article {{uid}}",
-      "description": "test",
-      "body": "test"
+      "title": "Dup Title {{uid}}",
+      "description": "second",
+      "body": "second"
     }
   }
 }
@@ -29,5 +29,6 @@ assert {
 }
 
 script:post-response {
-  bru.setVar("slug", res.body.article.slug);
+  bru.setVar("slug2", res.body.article.slug);
+  expect(res.body.article.slug).to.not.eql(bru.getVar("slug1"));
 }

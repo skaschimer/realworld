@@ -107,19 +107,34 @@ HTTP 422
 [Asserts]
 jsonpath "$.errors.body[0]" == "can't be blank"
 
-# Create article for cleanup test
+# Duplicate titles are allowed (each gets a unique slug)
 POST {{host}}/api/articles
 Authorization: Token {{token}}
 {
   "article": {
-    "title": "Cleanup Article {{uid}}",
-    "description": "test",
-    "body": "test"
+    "title": "Dup Title {{uid}}",
+    "description": "first",
+    "body": "first"
   }
 }
 HTTP 201
 [Captures]
-slug: jsonpath "$.article.slug"
+slug1: jsonpath "$.article.slug"
+
+POST {{host}}/api/articles
+Authorization: Token {{token}}
+{
+  "article": {
+    "title": "Dup Title {{uid}}",
+    "description": "second",
+    "body": "second"
+  }
+}
+HTTP 201
+[Captures]
+slug2: jsonpath "$.article.slug"
+[Asserts]
+jsonpath "$.article.slug" != {{slug1}}
 
 # Update unknown slug
 PUT {{host}}/api/articles/unknown-slug-{{uid}}
@@ -167,6 +182,10 @@ HTTP 404
 jsonpath "$.errors.article[0]" == "not found"
 
 # Cleanup
-DELETE {{host}}/api/articles/{{slug}}
+DELETE {{host}}/api/articles/{{slug1}}
+Authorization: Token {{token}}
+HTTP 204
+
+DELETE {{host}}/api/articles/{{slug2}}
 Authorization: Token {{token}}
 HTTP 204
