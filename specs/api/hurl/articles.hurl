@@ -172,6 +172,9 @@ jsonpath "$.article.slug" == "{{slug}}"
 jsonpath "$.article.description" == "Test description"
 jsonpath "$.article.body" == "Updated body content"
 jsonpath "$.article.tagList" isList
+jsonpath "$.article.tagList" count == 2
+jsonpath "$.article.tagList" contains "d_{{uid}}"
+jsonpath "$.article.tagList" contains "t_{{uid}}"
 jsonpath "$.article.createdAt" == "{{created_at}}"
 jsonpath "$.article.updatedAt" != "{{updated_at}}"
 jsonpath "$.article.favorited" isBoolean
@@ -187,11 +190,59 @@ jsonpath "$.article.slug" == "{{slug}}"
 jsonpath "$.article.description" == "Test description"
 jsonpath "$.article.body" == "Updated body content"
 jsonpath "$.article.tagList" isList
+jsonpath "$.article.tagList" count == 2
+jsonpath "$.article.tagList" contains "d_{{uid}}"
+jsonpath "$.article.tagList" contains "t_{{uid}}"
 jsonpath "$.article.createdAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.updatedAt" matches "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
 jsonpath "$.article.favorited" isBoolean
 jsonpath "$.article.favoritesCount" isInteger
 jsonpath "$.article.author.username" == "art_{{uid}}"
+
+# Update article without tagList: tags should be preserved
+PUT {{host}}/api/articles/{{slug}}
+Authorization: Token {{token}}
+{
+  "article": {
+    "body": "Body without touching tags"
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.article.body" == "Body without touching tags"
+jsonpath "$.article.tagList" count == 2
+jsonpath "$.article.tagList" contains "d_{{uid}}"
+jsonpath "$.article.tagList" contains "t_{{uid}}"
+
+# Update article: remove all tags with empty array
+PUT {{host}}/api/articles/{{slug}}
+Authorization: Token {{token}}
+{
+  "article": {
+    "tagList": []
+  }
+}
+HTTP 200
+[Asserts]
+jsonpath "$.article.tagList" isList
+jsonpath "$.article.tagList" count == 0
+
+# Verify tags were actually removed
+GET {{host}}/api/articles/{{slug}}
+HTTP 200
+[Asserts]
+jsonpath "$.article.tagList" isList
+jsonpath "$.article.tagList" count == 0
+
+# Update article: tagList null should be rejected
+PUT {{host}}/api/articles/{{slug}}
+Authorization: Token {{token}}
+{
+  "article": {
+    "tagList": null
+  }
+}
+HTTP 422
 
 # Delete article
 DELETE {{host}}/api/articles/{{slug}}

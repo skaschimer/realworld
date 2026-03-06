@@ -602,6 +602,10 @@ components:
           type: string
         body:
           type: string
+        tagList:
+          type: array
+          items:
+            type: string
     Comment:
       required:
         - author
