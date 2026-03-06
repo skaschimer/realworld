@@ -34,19 +34,19 @@ bruno-check:
 # Documentation
 
 documentation-setup:
-	cd apps/documentation && bun install
+	cd docs && bun install
 
 documentation-dev:
-	cd apps/documentation && bun run dev
+	cd docs && bun run dev
 
 documentation-dev-host:
-	cd apps/documentation && bun run dev --host
+	cd docs && bun run dev --host
 
 documentation-build:
-	cd apps/documentation && bun run build
+	cd docs && bun run build
 
 documentation-preview:
-	cd apps/documentation && bun run preview
+	cd docs && bun run preview
 
 documentation-clean:
-	rm -rf apps/documentation/.astro apps/documentation/dist apps/documentation/node_modules
+	rm -rf docs/.astro docs/dist docs/node_modules
