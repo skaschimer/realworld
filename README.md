@@ -20,6 +20,13 @@ Over 100 implementations have been created using various languages, libraries, a
 
 Explore them on [**CodebaseShow**](https://codebase.show/projects/realworld).
 
+## Spec-compliant backends
+
+These backends pass the full [API spec test suite](specs/api/):
+
+- [**Nitro + Prisma + Zod**](https://github.com/realworld-apps/nitro-prisma-zod-realworld-example-app) — TypeScript
+- [**Django Ninja**](https://github.com/c4ffein/realworld-django-ninja) — Python
+
 # Create a new implementation
 
 [**Create a new implementation >>>**](https://docs.realworld.show/implementation-creation/introduction)

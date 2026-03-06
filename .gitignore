@@ -48,8 +48,5 @@ __pycache__
 # Temp files
 .tmp
 
-# Prisma generated client
-apps/api/generated
-
 # Local db
 dev.db
