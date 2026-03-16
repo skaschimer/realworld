@@ -1,6 +1,8 @@
 ![RealWorld Example Applications](assets/media/realworld-dual-mode.png)
 
-<p align="center" style="margin-top: 30px;"><img src="assets/media/stacks_hr.gif"></p>
+<p align="center" style="margin-top: 30px;">
+  <img src="assets/media/frameworks.svg" alt="Frontend and Backend Frameworks" width="720"/>
+</p>
 
 ### See how [_the exact same_ Medium.com clone](https://demo.realworld.show) is built using different [frontends](https://codebase.show/projects/realworld?category=frontend) and [backends](https://codebase.show/projects/realworld?category=backend)
 
@@ -42,6 +44,10 @@ Or you can [view upcoming implementations (WIPs)](https://github.com/realworld-a
 - There is a hosted version of the backend API available for public usage at [api.realworld.show](https://api.realworld.show) (with strong account isolation), no API keys are required
 - There is an angular frontend plugged to this backend available at [demo.realworld.show](https://demo.realworld.show)
 - Interested in creating a new RealWorld stack? View our [starter guide & spec](https://docs.realworld.show/implementation-creation/introduction)
+
+# Logo Attribution
+
+See [LICENSES_LOGOS.md](docs/non-included/LICENSES_LOGOS.md) for framework logo licensing and attribution details.
 
 # Active Maintainers
 
