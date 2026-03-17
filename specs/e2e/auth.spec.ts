@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { register, login, logout, generateUniqueUser } from './helpers/auth';
 import { getToken, getAuthState } from './helpers/debug';
+import { API_MODE } from './helpers/config';
 
 test.describe('Authentication', () => {
   test('should register a new user', async ({ page }) => {
@@ -84,6 +85,7 @@ test.describe('Authentication', () => {
   });
 
   test('should handle invalid token on page reload gracefully', async ({ page }) => {
+    test.skip(!API_MODE, 'API-only: tests localStorage token handling');
     // Set an invalid token in localStorage before navigating
     await page.goto('/');
     await page.evaluate(() => {

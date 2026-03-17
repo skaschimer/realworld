@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { register, login, generateUniqueUser } from './helpers/auth';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { registerUserViaAPI, createManyArticles } from './helpers/api';
+import { API_MODE } from './helpers/config';
 
 test.describe('Navigation and Filtering', () => {
   test.afterEach(async ({ context }) => {
@@ -124,8 +125,10 @@ test.describe('Navigation and Filtering', () => {
     await page.waitForSelector('.article-preview', { timeout: 3000 });
     await expect(page.locator(`h1:has-text("${article.title}")`).first()).toBeVisible();
 
-    // Also should see johndoe's articles from demo backend
-    await expect(page.locator('.article-preview').first()).toBeVisible();
+    if (API_MODE) {
+      // Also should see johndoe's articles from demo backend
+      await expect(page.locator('.article-preview').first()).toBeVisible();
+    }
 
     // Switch to Your Feed (should be empty since not following anyone)
     await page.click('a:has-text("Your Feed")');
@@ -163,6 +166,7 @@ test.describe('Navigation and Filtering', () => {
     // Login and navigate to our tag to see only our articles
     await login(page, user.email, user.password);
     await page.goto(`/tag/${uniqueTag}`);
+
     await page.waitForSelector('.article-preview', { timeout: 3000 });
 
     // Count articles on first page (should be 10 or less)

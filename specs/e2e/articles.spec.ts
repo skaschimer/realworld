@@ -8,6 +8,7 @@ import {
   unfavoriteArticle,
   generateUniqueArticle,
 } from './helpers/articles';
+import { API_MODE } from './helpers/config';
 
 test.describe('Articles', () => {
   test.beforeEach(async ({ page }) => {
@@ -94,6 +95,7 @@ test.describe('Articles', () => {
    * practice: clients should handle status code classes, not specific codes.
    */
   test('should delete an article when server returns 200 instead of 204', async ({ page }) => {
+    test.skip(!API_MODE, 'API-only: tests client-side HTTP status code handling via page.route()');
     const article = generateUniqueArticle();
 
     await createArticle(page, article);

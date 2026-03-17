@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { register, generateUniqueUser } from './helpers/auth';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { addComment, deleteComment, getCommentCount } from './helpers/comments';
+import { API_MODE } from './helpers/config';
 
 test.describe('Comments', () => {
   // Force each test to use a fresh browser context
@@ -57,6 +58,7 @@ test.describe('Comments', () => {
    * practice: clients should handle status code classes, not specific codes.
    */
   test('should delete comment when server returns 200 instead of 204', async ({ page }) => {
+    test.skip(!API_MODE, 'API-only: tests client-side HTTP status code handling via page.route()');
     const commentText = 'Comment to test 200 status';
     await addComment(page, commentText);
     // Comment should be visible

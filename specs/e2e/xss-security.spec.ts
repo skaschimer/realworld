@@ -1,6 +1,11 @@
 import { test, expect, Page } from '@playwright/test';
 import { generateUniqueUser } from './helpers/auth';
 import { registerUserViaAPI, updateUserViaAPI, createArticleViaAPI } from './helpers/api';
+import { API_MODE } from './helpers/config';
+
+test.beforeEach(({ }, testInfo) => {
+  testInfo.skip(!API_MODE, 'API-only: all tests use direct API calls + localStorage injection');
+});
 
 /**
  * XSS Security Tests - BASIC SMOKE TESTS ONLY

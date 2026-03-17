@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { API_MODE } from './helpers/config';
 
 test.describe('Health Checks', () => {
   test('app should load successfully', async ({ page }) => {
@@ -12,6 +13,7 @@ test.describe('Health Checks', () => {
   });
 
   test('API should be accessible', async ({ request }) => {
+    test.skip(!API_MODE, 'API-only: direct API endpoint check');
     const response = await request.get('https://api.realworld.show/api/tags');
     expect(response.ok()).toBeTruthy();
   });
