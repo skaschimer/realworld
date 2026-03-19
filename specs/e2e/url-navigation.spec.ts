@@ -182,10 +182,8 @@ test.describe('Pagination', () => {
     await expect(page.locator('.pagination button:has-text("2")')).toBeVisible({ timeout: 2000 });
     // Click page 2
     await page.click('.pagination button:has-text("2")');
-    // Verify URL contains the tag and page parameter
-    const url = new URL(page.url());
-    expect(decodeURIComponent(url.pathname)).toBe(`/tag/${uniqueTag}`);
-    expect(url.searchParams.get('page')).toBe('2');
+    // Wait for URL to update after page navigation
+    await expect(page).toHaveURL(`/tag/${uniqueTag}?page=2`);
   });
 
   test('page should reset when switching feeds', async ({ page, request }) => {
