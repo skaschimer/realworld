@@ -253,23 +253,27 @@ test.describe('Articles', () => {
       await page.waitForTimeout(100);
     }
 
-    // Intercept the PUT request to verify tagList is sent as []
+    // Intercept the PUT request to verify tagList is sent as [] (SPA-only: fullstack doesn't use fetch)
     let capturedTagList: unknown = undefined;
-    await page.route('**/api/articles/*', async route => {
-      if (route.request().method() === 'PUT') {
-        const body = route.request().postDataJSON();
-        capturedTagList = body?.article?.tagList;
-        await route.continue();
-      } else {
-        await route.continue();
-      }
-    });
+    if (API_MODE) {
+      await page.route('**/api/articles/*', async route => {
+        if (route.request().method() === 'PUT') {
+          const body = route.request().postDataJSON();
+          capturedTagList = body?.article?.tagList;
+          await route.continue();
+        } else {
+          await route.continue();
+        }
+      });
+    }
 
     // Publish
     await Promise.all([page.waitForURL(/\/article\/.+/), page.click('button:has-text("Publish Article")')]);
 
-    // Verify the frontend sent tagList: [] (not undefined/omitted)
-    expect(capturedTagList).toEqual([]);
+    // Verify the frontend sent tagList: [] (not undefined/omitted) — SPA only
+    if (API_MODE) {
+      expect(capturedTagList).toEqual([]);
+    }
 
     // Verify no tags on the article page
     await expect(page.locator('.tag-list .tag-default')).toHaveCount(0);
