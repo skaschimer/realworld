@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 import { register, generateUniqueUser } from './helpers/auth';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { followUser, unfollowUser } from './helpers/profile';
+import { registerUserViaAPI, createArticleViaAPI } from './helpers/api';
+import { API_MODE } from './helpers/config';
 
 test.describe('Social Features', () => {
   test.afterEach(async ({ context }) => {
@@ -16,21 +18,26 @@ test.describe('Social Features', () => {
     await new Promise(resolve => setTimeout(resolve, 500));
   });
 
-  test('should follow and unfollow a user', async ({ page }) => {
+  test('should follow and unfollow a user', async ({ page, request }) => {
     // Register our test user
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
-    // Follow an existing demo user (johndoe is always available on demo backend)
-    await followUser(page, 'johndoe');
+    // API mode: use johndoe (demo backend, user isolation prevents creating visible users)
+    // Fullstack mode: create a second user via API on the same local DB
+    let targetUsername: string;
+    if (API_MODE) {
+      targetUsername = 'johndoe';
+    } else {
+      const otherUser = generateUniqueUser();
+      await registerUserViaAPI(request, otherUser);
+      targetUsername = otherUser.username;
+    }
 
-    // Button should change to Unfollow
+    await followUser(page, targetUsername);
     await expect(page.locator('button:has-text("Unfollow")')).toBeVisible();
 
-    // Unfollow johndoe
-    await unfollowUser(page, 'johndoe');
-
-    // Button should change back to Follow
+    await unfollowUser(page, targetUsername);
     await expect(page.locator('button:has-text("Follow")')).toBeVisible();
   });
 
@@ -51,29 +58,35 @@ test.describe('Social Features', () => {
     await expect(page.locator('button:has-text("Follow")')).not.toBeVisible();
   });
 
-  test('should view other user profile', async ({ page }) => {
+  test('should view other user profile', async ({ page, request }) => {
     // Register our test user
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
-    // Visit johndoe's profile (existing demo user)
-    await page.goto('/profile/johndoe', { waitUntil: 'load' });
+    // API mode: johndoe exists with articles on the demo backend
+    // Fullstack mode: create a second user with an article
+    let targetUsername: string;
+    if (API_MODE) {
+      targetUsername = 'johndoe';
+    } else {
+      const otherUser = generateUniqueUser();
+      const otherToken = await registerUserViaAPI(request, otherUser);
+      await createArticleViaAPI(request, otherToken, {
+        title: `Article by ${otherUser.username}`,
+        description: 'A test article',
+        body: 'Body content',
+      });
+      targetUsername = otherUser.username;
+    }
 
-    // Wait for profile page to load
+    await page.goto(`/profile/${targetUsername}`, { waitUntil: 'load' });
     await page.waitForSelector('h4', { timeout: 10000 });
 
-    // Should show johndoe's information
-    await expect(page.locator('h4')).toHaveText('johndoe');
-
-    // Should see Follow button (other user's profile)
+    await expect(page.locator('h4')).toHaveText(targetUsername);
     await expect(page.locator('button:has-text("Follow")')).toBeVisible();
-
-    // Should not see "Edit Profile Settings" button in the profile area (different from nav bar Settings link)
     await expect(
       page.locator('.user-info a[href="/settings"]').filter({ hasText: 'Edit Profile Settings' }),
     ).not.toBeVisible();
-
-    // Should see johndoe's articles (demo backend has articles from johndoe)
     await expect(page.locator('.article-preview').first()).toBeVisible();
   });
 
@@ -133,13 +146,27 @@ test.describe('Social Features', () => {
     await expect(page.locator('.article-preview').first()).toBeVisible({ timeout: 3000 });
   });
 
-  test('should display followed users articles in feed', async ({ page }) => {
+  test('should display followed users articles in feed', async ({ page, request }) => {
     // Register our test user
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
-    // Follow johndoe (existing demo user with articles)
-    await followUser(page, 'johndoe');
+    // API mode: johndoe exists with articles on the demo backend
+    // Fullstack mode: create a second user with an article
+    let targetUsername: string;
+    if (API_MODE) {
+      targetUsername = 'johndoe';
+    } else {
+      const otherUser = generateUniqueUser();
+      const otherToken = await registerUserViaAPI(request, otherUser);
+      await createArticleViaAPI(request, otherToken, {
+        title: `Feed article by ${otherUser.username}`,
+        description: 'Should appear in feed',
+        body: 'Body content',
+      });
+      targetUsername = otherUser.username;
+    }
+    await followUser(page, targetUsername);
 
     // Go to home and click "Your Feed"
     await page.goto('/', { waitUntil: 'load' });
@@ -148,8 +175,6 @@ test.describe('Social Features', () => {
 
     // Wait for articles to load
     await page.waitForSelector('.article-preview', { timeout: 10000 });
-
-    // Should see johndoe's articles in feed
     await expect(page.locator('.article-preview').first()).toBeVisible();
   });
 });
