@@ -3,6 +3,7 @@ import { register, generateUniqueUser } from './helpers/auth';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { followUser, unfollowUser } from './helpers/profile';
 import { registerUserViaAPI, createArticleViaAPI } from './helpers/api';
+import { createUserInIsolation } from './helpers/setup';
 import { API_MODE } from './helpers/config';
 
 test.describe('Social Features', () => {
@@ -18,19 +19,19 @@ test.describe('Social Features', () => {
     await new Promise(resolve => setTimeout(resolve, 500));
   });
 
-  test('should follow and unfollow a user', async ({ page, request }) => {
+  test('should follow and unfollow a user', async ({ page, request, browser }) => {
     // Register our test user
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
     // API mode: use johndoe (demo backend, user isolation prevents creating visible users)
-    // Fullstack mode: create a second user via API on the same local DB
+    // Fullstack mode: create a second user via UI in an isolated browser context
     let targetUsername: string;
     if (API_MODE) {
       targetUsername = 'johndoe';
     } else {
       const otherUser = generateUniqueUser();
-      await registerUserViaAPI(request, otherUser);
+      await createUserInIsolation(browser, otherUser);
       targetUsername = otherUser.username;
     }
 
@@ -58,24 +59,27 @@ test.describe('Social Features', () => {
     await expect(page.locator('button:has-text("Follow")')).not.toBeVisible();
   });
 
-  test('should view other user profile', async ({ page, request }) => {
+  test('should view other user profile', async ({ page, request, browser }) => {
     // Register our test user
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
     // API mode: johndoe exists with articles on the demo backend
-    // Fullstack mode: create a second user with an article
+    // Fullstack mode: create a second user with an article via UI
     let targetUsername: string;
     if (API_MODE) {
       targetUsername = 'johndoe';
     } else {
       const otherUser = generateUniqueUser();
-      const otherToken = await registerUserViaAPI(request, otherUser);
-      await createArticleViaAPI(request, otherToken, {
+      const ctx = await browser.newContext();
+      const otherPage = await ctx.newPage();
+      await register(otherPage, otherUser.username, otherUser.email, otherUser.password);
+      await createArticle(otherPage, {
         title: `Article by ${otherUser.username}`,
         description: 'A test article',
         body: 'Body content',
       });
+      await ctx.close();
       targetUsername = otherUser.username;
     }
 
@@ -146,24 +150,27 @@ test.describe('Social Features', () => {
     await expect(page.locator('.article-preview').first()).toBeVisible({ timeout: 3000 });
   });
 
-  test('should display followed users articles in feed', async ({ page, request }) => {
+  test('should display followed users articles in feed', async ({ page, request, browser }) => {
     // Register our test user
     const user = generateUniqueUser();
     await register(page, user.username, user.email, user.password);
 
     // API mode: johndoe exists with articles on the demo backend
-    // Fullstack mode: create a second user with an article
+    // Fullstack mode: create a second user with an article via UI
     let targetUsername: string;
     if (API_MODE) {
       targetUsername = 'johndoe';
     } else {
       const otherUser = generateUniqueUser();
-      const otherToken = await registerUserViaAPI(request, otherUser);
-      await createArticleViaAPI(request, otherToken, {
+      const ctx = await browser.newContext();
+      const otherPage = await ctx.newPage();
+      await register(otherPage, otherUser.username, otherUser.email, otherUser.password);
+      await createArticle(otherPage, {
         title: `Feed article by ${otherUser.username}`,
         description: 'Should appear in feed',
         body: 'Body content',
       });
+      await ctx.close();
       targetUsername = otherUser.username;
     }
     await followUser(page, targetUsername);
