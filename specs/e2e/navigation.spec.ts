@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { register, login, generateUniqueUser } from './helpers/auth';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
-import { registerUserViaAPI, createManyArticles } from './helpers/api';
+import { registerUserViaAPI, createManyArticles as createManyArticlesViaAPI } from './helpers/api';
+import { createUserInIsolation, createManyArticles } from './helpers/setup';
 import { API_MODE } from './helpers/config';
 
 test.describe('Navigation and Filtering', () => {
@@ -156,15 +157,19 @@ test.describe('Navigation and Filtering', () => {
     await expect(page.locator('.sidebar .tag-list .tag-pill:has-text("trending")')).toBeVisible();
   });
 
-  test('should paginate articles', async ({ page, request }) => {
-    // Create user and 12 articles via API (much faster than UI)
+  test('should paginate articles', async ({ page, request, browser }) => {
+    // Create user and 12 articles (via API when available, UI otherwise)
     const uniqueTag = `pag${Date.now()}`;
     const user = generateUniqueUser();
-    const token = await registerUserViaAPI(request, user);
-    await createManyArticles(request, token, 12, uniqueTag);
-
-    // Login and navigate to our tag to see only our articles
-    await login(page, user.email, user.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, user);
+      await createManyArticlesViaAPI(request, token, 12, uniqueTag);
+      await login(page, user.email, user.password);
+    } else {
+      await createUserInIsolation(browser, user);
+      await login(page, user.email, user.password);
+      await createManyArticles(page, 12, uniqueTag);
+    }
     await page.goto(`/tag/${uniqueTag}`);
 
     await page.waitForSelector('.article-preview', { timeout: 3000 });
