@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { register, generateUniqueUser, login } from './helpers/auth';
-import { registerUserViaAPI, createManyArticles } from './helpers/api';
+import { registerUserViaAPI, createManyArticles as createManyArticlesViaAPI } from './helpers/api';
+import { createUserInIsolation, createManyArticles } from './helpers/setup';
+import { API_MODE } from './helpers/config';
 
 test.describe('URL-based Navigation (Realworld Issue #691)', () => {
   test.afterEach(async ({ context }) => {
@@ -106,14 +108,19 @@ test.describe('Pagination', () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
   });
 
-  test('pagination should update URL with ?page=N', async ({ page, request }) => {
+  test('pagination should update URL with ?page=N', async ({ page, request, browser }) => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    const token = await registerUserViaAPI(request, testUser);
-    await createManyArticles(request, token, 15, uniqueTag);
-    // Login as the user who created the articles (session isolation)
-    await login(page, testUser.email, testUser.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, testUser);
+      await createManyArticlesViaAPI(request, token, 15, uniqueTag);
+      await login(page, testUser.email, testUser.password);
+    } else {
+      await createUserInIsolation(browser, testUser);
+      await login(page, testUser.email, testUser.password);
+      await createManyArticles(page, 15, uniqueTag);
+    }
     // Navigate to the tag page - this shows ONLY our articles
     await page.goto(`/tag/${uniqueTag}`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
@@ -127,14 +134,19 @@ test.describe('Pagination', () => {
     await expect(page.locator('.pagination .page-item:has(button:has-text("2"))')).toHaveClass(/active/);
   });
 
-  test('should load correct page when navigating directly to ?page=N', async ({ page, request }) => {
+  test('should load correct page when navigating directly to ?page=N', async ({ page, request, browser }) => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    const token = await registerUserViaAPI(request, testUser);
-    await createManyArticles(request, token, 15, uniqueTag);
-    // Login as the user who created the articles (session isolation)
-    await login(page, testUser.email, testUser.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, testUser);
+      await createManyArticlesViaAPI(request, token, 15, uniqueTag);
+      await login(page, testUser.email, testUser.password);
+    } else {
+      await createUserInIsolation(browser, testUser);
+      await login(page, testUser.email, testUser.password);
+      await createManyArticles(page, 15, uniqueTag);
+    }
     // Go directly to page 2 of the tag
     await page.goto(`/tag/${uniqueTag}?page=2`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
@@ -167,14 +179,19 @@ test.describe('Pagination', () => {
     }
   });
 
-  test('pagination should work with /tag/:tag', async ({ page, request }) => {
+  test('pagination should work with /tag/:tag', async ({ page, request, browser }) => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    const token = await registerUserViaAPI(request, testUser);
-    await createManyArticles(request, token, 15, uniqueTag);
-    // Login as the user who created the articles (session isolation)
-    await login(page, testUser.email, testUser.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, testUser);
+      await createManyArticlesViaAPI(request, token, 15, uniqueTag);
+      await login(page, testUser.email, testUser.password);
+    } else {
+      await createUserInIsolation(browser, testUser);
+      await login(page, testUser.email, testUser.password);
+      await createManyArticles(page, 15, uniqueTag);
+    }
     // Navigate to our tag
     await page.goto(`/tag/${uniqueTag}`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
@@ -186,14 +203,19 @@ test.describe('Pagination', () => {
     await expect(page).toHaveURL(`/tag/${uniqueTag}?page=2`);
   });
 
-  test('page should reset when switching feeds', async ({ page, request }) => {
+  test('page should reset when switching feeds', async ({ page, request, browser }) => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    const token = await registerUserViaAPI(request, testUser);
-    await createManyArticles(request, token, 15, uniqueTag);
-    // Login as the user who created the articles (session isolation)
-    await login(page, testUser.email, testUser.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, testUser);
+      await createManyArticlesViaAPI(request, token, 15, uniqueTag);
+      await login(page, testUser.email, testUser.password);
+    } else {
+      await createUserInIsolation(browser, testUser);
+      await login(page, testUser.email, testUser.password);
+      await createManyArticles(page, 15, uniqueTag);
+    }
     // Navigate to our tag
     await page.goto(`/tag/${uniqueTag}`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
@@ -209,14 +231,19 @@ test.describe('Pagination', () => {
     await page.waitForSelector('.article-preview', { timeout: 2000 });
   });
 
-  test('tag pagination shows correct articles per page', async ({ page, request }) => {
+  test('tag pagination shows correct articles per page', async ({ page, request, browser }) => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    const token = await registerUserViaAPI(request, testUser);
-    await createManyArticles(request, token, 15, uniqueTag);
-    // Login as the user who created the articles (session isolation)
-    await login(page, testUser.email, testUser.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, testUser);
+      await createManyArticlesViaAPI(request, token, 15, uniqueTag);
+      await login(page, testUser.email, testUser.password);
+    } else {
+      await createUserInIsolation(browser, testUser);
+      await login(page, testUser.email, testUser.password);
+      await createManyArticles(page, 15, uniqueTag);
+    }
     // Navigate to our tag
     await page.goto(`/tag/${uniqueTag}`);
     await page.waitForSelector('.article-preview', { timeout: 2000 });
