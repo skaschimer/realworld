@@ -46,12 +46,8 @@ export async function createManyArticles(
       await page.fill('input[name="title"]', `Test Article ${uniqueId} Number ${i}`);
       await page.fill('input[name="description"]', `Description for test article ${i}`);
       await page.fill('textarea[name="body"]', `Body content for test article ${i}. Created with ID ${uniqueId}.`);
-      if (API_MODE) {
-        await page.fill('input[placeholder="Enter tags"]', tag);
-        await page.press('input[placeholder="Enter tags"]', 'Enter');
-      } else {
-        await page.fill('input[placeholder="Enter tags"]', tag);
-      }
+      await page.fill('input[placeholder="Enter tags"]', tag);
+      await page.press('input[placeholder="Enter tags"]', 'Enter');
       await Promise.all([
         page.waitForURL(/\/article\/.+/),
         page.click('button:has-text("Publish Article")'),
