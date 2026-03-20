@@ -3,6 +3,8 @@ import { register, login, generateUniqueUser } from './helpers/auth';
 import { registerUserViaAPI, updateUserViaAPI } from './helpers/api';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { addComment } from './helpers/comments';
+import { updateProfile } from './helpers/profile';
+import { API_MODE } from './helpers/config';
 
 /**
  * Tests for null/empty image and bio field handling.
@@ -68,10 +70,15 @@ test.describe('Null/Empty Image and Bio Handling', () => {
 
   test('setting image should display custom avatar on profile page', async ({ page, request }) => {
     const user = generateUniqueUser();
-    const token = await registerUserViaAPI(request, user);
     const testImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
-    await updateUserViaAPI(request, token, { image: testImage });
-    await login(page, user.email, user.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, user);
+      await updateUserViaAPI(request, token, { image: testImage });
+      await login(page, user.email, user.password);
+    } else {
+      await register(page, user.username, user.email, user.password);
+      await updateProfile(page, { image: testImage });
+    }
     await page.goto(`/profile/${user.username}`, { waitUntil: 'load' });
     await page.waitForSelector('.user-img');
     const profileImg = page.locator('.user-img');
@@ -80,11 +87,16 @@ test.describe('Null/Empty Image and Bio Handling', () => {
 
   test('clearing image to empty string should restore default avatar', async ({ page, request }) => {
     const user = generateUniqueUser();
-    const token = await registerUserViaAPI(request, user);
-    // Set then clear
-    await updateUserViaAPI(request, token, { image: 'https://api.realworld.io/images/smiley-cyrus.jpeg' });
-    await updateUserViaAPI(request, token, { image: '' });
-    await login(page, user.email, user.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, user);
+      await updateUserViaAPI(request, token, { image: 'https://api.realworld.io/images/smiley-cyrus.jpeg' });
+      await updateUserViaAPI(request, token, { image: '' });
+      await login(page, user.email, user.password);
+    } else {
+      await register(page, user.username, user.email, user.password);
+      await updateProfile(page, { image: 'https://api.realworld.io/images/smiley-cyrus.jpeg' });
+      await updateProfile(page, { image: '' });
+    }
     await page.goto(`/profile/${user.username}`, { waitUntil: 'load' });
     await page.waitForSelector('.user-img');
     const profileImg = page.locator('.user-img');
@@ -106,11 +118,17 @@ test.describe('Null/Empty Image and Bio Handling', () => {
     // Cooldown: this test runs after many rapid API calls; backend needs breathing room
     await new Promise(resolve => setTimeout(resolve, 1000));
     const user = generateUniqueUser();
-    const token = await registerUserViaAPI(request, user);
     const testBio = 'This is a test bio';
-    await updateUserViaAPI(request, token, { bio: testBio });
-    await updateUserViaAPI(request, token, { bio: '' });
-    await login(page, user.email, user.password);
+    if (API_MODE) {
+      const token = await registerUserViaAPI(request, user);
+      await updateUserViaAPI(request, token, { bio: testBio });
+      await updateUserViaAPI(request, token, { bio: '' });
+      await login(page, user.email, user.password);
+    } else {
+      await register(page, user.username, user.email, user.password);
+      await updateProfile(page, { bio: testBio });
+      await updateProfile(page, { bio: '' });
+    }
     await page.goto(`/profile/${user.username}`, { waitUntil: 'load' });
     await page.waitForSelector('.user-info');
     const bioText = await page.locator('.user-info p').textContent();
