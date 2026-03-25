@@ -41,8 +41,8 @@ script:post-response {
   expect(res.body.article.tagList).to.include("t_" + bru.getVar("uid"));
   expect(res.body.article.tagList[0]).to.eql("d_" + bru.getVar("uid"));
   expect(res.body.article.tagList[1]).to.eql("t_" + bru.getVar("uid"));
-  expect(res.body.article.createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T/);
-  expect(res.body.article.updatedAt).to.match(/^\\d{4}-\\d{2}-\\d{2}T/);
+  expect(res.body.article.createdAt).to.match(/^\d{4}-\d{2}-\d{2}T/);
+  expect(res.body.article.updatedAt).to.match(/^\d{4}-\d{2}-\d{2}T/);
   expect(res.body.article.favorited).to.eql(false);
   expect(res.body.article.favoritesCount).to.eql(0);
   expect(res.body.article.author.username).to.eql("art_" + bru.getVar("uid"));

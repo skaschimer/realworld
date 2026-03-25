@@ -368,10 +368,13 @@ function assertToJs(assertLine) {
   }
 
   // matches "regex"
+  // Hurl regex is a string where \\ means a literal backslash, so \\d means \d (digit shorthand).
+  // JS regex literals don't need that extra escaping: /\d/ is already the digit shorthand.
   const matchesMatch = rest.match(/^matches\s+"([^"]*)"$/);
   if (matchesMatch) {
     const jsPath = jsonpathToJs(jp);
-    return `expect(${jsPath}).to.match(/${matchesMatch[1]}/);`;
+    const regexBody = matchesMatch[1].replace(/\\\\/g, "\\");
+    return `expect(${jsPath}).to.match(/${regexBody}/);`;
   }
 
   // ==, !=, or >= with value
