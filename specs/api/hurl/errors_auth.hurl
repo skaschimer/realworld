@@ -168,3 +168,57 @@ Authorization: Token {{token}}
   }
 }
 HTTP 422
+
+# === NIST 800-63B password policy for PUT /user ===
+# Ref: https://pages.nist.gov/800-63-3/sp800-63b.html section 5.1.1.2
+# Rules: min 8 chars, must accept at least 64 chars, no composition, no breach check (demo)
+
+# Update password to empty string - should reject
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "password": ""
+  }
+}
+HTTP 422
+
+# Update password to null - should reject
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "password": null
+  }
+}
+HTTP 422
+
+# Update password shorter than 8 chars - should reject
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "password": "short7c"
+  }
+}
+HTTP 422
+
+# Update password to 8 char simple word - should accept
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "password": "bonjour1"
+  }
+}
+HTTP 200
+
+# Update password to 64 chars - should accept
+PUT {{host}}/api/user
+Authorization: Token {{token}}
+{
+  "user": {
+    "password": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+}
+HTTP 200
