@@ -168,8 +168,12 @@ test.describe('Null/Empty Image and Bio Handling', () => {
       const img = preview.locator('.article-meta img');
       await expect(img).toBeVisible();
       await expect(img).toHaveAttribute('src', /\.(svg|jpe?g|png|webp)(\?.*)?$/i);
-      const loaded = await img.evaluate((el: HTMLImageElement) => el.naturalWidth > 0);
-      expect(loaded).toBe(true);
+      await expect
+        .poll(
+          () => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0),
+          { intervals: [26], timeout: 2000 },
+        )
+        .toBe(true);
     }
     // Ensure the feed actually contains articles from different users
     expect(authors.size).toBeGreaterThanOrEqual(2);
