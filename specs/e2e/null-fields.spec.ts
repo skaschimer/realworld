@@ -132,8 +132,7 @@ test.describe('Null/Empty Image and Bio Handling', () => {
     await page.goto(`/profile/${user.username}`, { waitUntil: 'load' });
     await page.waitForSelector('.user-info');
     const bioText = await page.locator('.user-info p').textContent();
-    expect(bioText?.trim()).not.toBe(testBio);
-    expect(bioText?.trim()).not.toBe('null');
+    expect(bioText?.trim()).toBe('');
   });
 
   test('settings form should show empty string for null image', async ({ page }) => {
