@@ -4,7 +4,7 @@ import { registerUserViaAPI, updateUserViaAPI } from './helpers/api';
 import { createArticle, generateUniqueArticle } from './helpers/articles';
 import { addComment } from './helpers/comments';
 import { updateProfile } from './helpers/profile';
-import { API_MODE } from './helpers/config';
+import { EXTERNAL_API } from './helpers/config';
 
 /**
  * Tests for null/empty image and bio field handling.
@@ -71,7 +71,7 @@ test.describe('Null/Empty Image and Bio Handling', () => {
   test('setting image should display custom avatar on profile page', async ({ page, request }) => {
     const user = generateUniqueUser();
     const testImage = 'https://api.realworld.io/images/smiley-cyrus.jpeg';
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, user);
       await updateUserViaAPI(request, token, { image: testImage });
       await login(page, user.email, user.password);
@@ -87,7 +87,7 @@ test.describe('Null/Empty Image and Bio Handling', () => {
 
   test('clearing image to empty string should restore default avatar', async ({ page, request }) => {
     const user = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, user);
       await updateUserViaAPI(request, token, { image: 'https://api.realworld.io/images/smiley-cyrus.jpeg' });
       await updateUserViaAPI(request, token, { image: '' });
@@ -119,7 +119,7 @@ test.describe('Null/Empty Image and Bio Handling', () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     const user = generateUniqueUser();
     const testBio = 'This is a test bio';
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, user);
       await updateUserViaAPI(request, token, { bio: testBio });
       await updateUserViaAPI(request, token, { bio: '' });

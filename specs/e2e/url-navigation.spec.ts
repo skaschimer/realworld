@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { register, generateUniqueUser, login } from './helpers/auth';
 import { registerUserViaAPI, createManyArticles as createManyArticlesViaAPI } from './helpers/api';
 import { createUserInIsolation, createManyArticles } from './helpers/setup';
-import { API_MODE } from './helpers/config';
+import { EXTERNAL_API } from './helpers/config';
 
 test.describe('URL-based Navigation (Realworld Issue #691)', () => {
   test.afterEach(async ({ context }) => {
@@ -112,7 +112,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -138,7 +138,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -183,7 +183,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -207,7 +207,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);
@@ -235,7 +235,7 @@ test.describe('Pagination', () => {
     // Create user and 15 articles with a unique tag for this test
     const uniqueTag = `pag${Date.now()}`;
     const testUser = generateUniqueUser();
-    if (API_MODE) {
+    if (EXTERNAL_API) {
       const token = await registerUserViaAPI(request, testUser);
       await createManyArticlesViaAPI(request, token, 15, uniqueTag);
       await login(page, testUser.email, testUser.password);

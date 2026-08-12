@@ -8,7 +8,7 @@ import {
   unfavoriteArticle,
   generateUniqueArticle,
 } from './helpers/articles';
-import { API_MODE } from './helpers/config';
+import { BROWSER_API } from './helpers/config';
 
 test.describe('Articles', () => {
   test.beforeEach(async ({ page }) => {
@@ -95,7 +95,7 @@ test.describe('Articles', () => {
    * practice: clients should handle status code classes, not specific codes.
    */
   test('should delete an article when server returns 200 instead of 204', async ({ page }) => {
-    test.skip(!API_MODE, 'API-only: tests client-side HTTP status code handling via page.route()');
+    test.skip(!BROWSER_API, 'SPA-only: tests client-side HTTP status code handling via page.route()');
     const article = generateUniqueArticle();
 
     await createArticle(page, article);
@@ -255,7 +255,7 @@ test.describe('Articles', () => {
 
     // Intercept the PUT request to verify tagList is sent as [] (SPA-only: fullstack doesn't use fetch)
     let capturedTagList: unknown = undefined;
-    if (API_MODE) {
+    if (BROWSER_API) {
       await page.route('**/api/articles/*', async route => {
         if (route.request().method() === 'PUT') {
           const body = route.request().postDataJSON();
@@ -271,7 +271,7 @@ test.describe('Articles', () => {
     await Promise.all([page.waitForURL(/\/article\/.+/), page.click('button:has-text("Publish Article")')]);
 
     // Verify the frontend sent tagList: [] (not undefined/omitted) — SPA only
-    if (API_MODE) {
+    if (BROWSER_API) {
       expect(capturedTagList).toEqual([]);
     }
 
